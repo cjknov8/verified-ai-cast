@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Verified AI Cast
 
-## Getting Started
+Actor-first AI appearance approval and certification platform MVP.
 
-First, run the development server:
+The product is based on a simple premise: AI asset use cannot be perfectly controlled, but official actor approval can be made scarce, visible, revocable, and commercially valuable.
+
+## What This MVP Shows
+
+- Premium operating dashboard
+- Actor and agency safety policy controls
+- Creator result submission flow
+- Submitted AI video review workspace
+- Approval, rejection, and revision-request action surface
+- Public certificate page
+- Revenue and license ledger summary
+- Product spec and deployment checklist
+
+## Routes
+
+- `/` operations dashboard
+- `/agency` actor and agency dashboard
+- `/talents/talent-01/policy` AI appearance policy editor
+- `/projects/new` creator project submission
+- `/reviews/project-01` submitted AI video review
+- `/certificates/cert-2026-0007` public certificate page
+- `/settlements` settlement and license ledger
+
+## Local Development
 
 ```bash
+cd ~/Documents/CodexProject/verified-ai-cast
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Verification
 
-## Learn More
+```bash
+npm run lint
+npm run build
+npm exec vercel -- --version
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Docs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `docs/product-spec.md`
+- `docs/deployment-checklist.md`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Next Phases
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Add Supabase Auth and PostgreSQL.
+2. Add role-based actor, agency, creator, and admin permissions.
+3. Connect submission forms to persistent storage and signed media URLs.
+4. Add immutable certificate audit logs and revocation history.
+5. Add payment and payout flows.
+6. Build the actor review experience as an iPhone app with Expo or React Native.
