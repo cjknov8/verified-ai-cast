@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
-import { Panel, PrimaryButton, SectionHeader, SecondaryButton, StatusPill } from "@/components/ui";
+import { MetaRow, Notice, Panel, PanelHeader, PrimaryButton, SectionHeader, SecondaryButton, StatusPill } from "@/components/ui";
 import {
   formatCurrency,
   getAuditLogsForProject,
@@ -24,13 +24,15 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         eyebrow="Submitted AI video review"
         title={project.title}
         description="Reviewer workspace for comparing the submitted result against talent policy, then approving, rejecting, or requesting revision."
+        aside={<StatusPill status={project.status} />}
       />
       <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
         <Panel>
-          <div className="aspect-video rounded border border-[#d6cdbf] bg-[#1b1b19] p-5 text-white">
+          <PanelHeader eyebrow="Secure screener" title="Review the submitted final output" description="Compare the result with the declared rights scope and represented talent policy before recording a decision." />
+          <div className="mt-5 aspect-video border border-[#d6cdbf] bg-[#111817] p-5 text-white">
             <div className="flex h-full flex-col justify-between">
               <div className="flex items-center justify-between">
-                <span className="rounded border border-white/25 px-3 py-1 text-xs">Secure screener placeholder</span>
+                <span className="border border-white/25 px-3 py-1 text-xs">Secure screener placeholder</span>
                 <StatusPill status={project.status} />
               </div>
               <div>
@@ -56,20 +58,20 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
         </Panel>
         <div className="grid gap-5">
           <Panel>
-            <h2 className="text-lg font-semibold">Submission facts</h2>
-            <dl className="mt-4 space-y-3 text-sm">
-              <Fact label="Talent" value={talent.name} />
-              <Fact label="Producer" value={project.producer} />
-              <Fact label="Territory" value={project.territory} />
-              <Fact label="Duration" value={project.duration} />
-              <Fact label="Budget" value={formatCurrency(project.budget)} />
+            <PanelHeader eyebrow="Decision context" title="Submission facts" />
+            <dl className="mt-3">
+              <MetaRow label="Talent" value={talent.name} />
+              <MetaRow label="Producer" value={project.producer} />
+              <MetaRow label="Territory" value={project.territory} />
+              <MetaRow label="Duration" value={project.duration} />
+              <MetaRow label="Budget" value={formatCurrency(project.budget)} />
             </dl>
           </Panel>
           <Panel>
-            <h2 className="text-lg font-semibold">Risk and notes</h2>
+            <PanelHeader eyebrow="Reviewer attention" title="Risk and notes" />
             <div className="mt-3 space-y-2 text-sm">
               {[...project.riskFlags, ...project.reviewerNotes].map((item) => (
-                <p key={item} className="rounded border border-[#e1d8ca] bg-white p-3 text-[#4d4941]">{item}</p>
+                <Notice key={item} tone="warning">{item}</Notice>
               ))}
             </div>
             {project.certificateId ? (
@@ -80,18 +82,18 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
           </Panel>
           {certificate ? (
             <Panel>
+              <PanelHeader eyebrow="Public trust" title="Issued certificate" />
               <div className="flex items-center justify-between gap-3">
-                <h2 className="text-lg font-semibold">Issued certificate</h2>
+                <p className="mt-3 font-mono text-sm text-[#31554f]">{certificate.id}</p>
                 <StatusPill status={certificate.status} />
               </div>
-              <p className="mt-3 font-mono text-sm text-[#31554f]">{certificate.id}</p>
               <p className="mt-2 text-sm text-[#625d55]">
                 {certificate.approvedUrls.length} approved publishing URLs
               </p>
             </Panel>
           ) : null}
           <Panel>
-            <h2 className="text-lg font-semibold">Audit log</h2>
+            <PanelHeader eyebrow="Immutable history" title="Audit log" />
             <div className="mt-3 space-y-3">
               {auditLogs.map((entry) => (
                 <div key={entry.id} className="rounded border border-[#e1d8ca] bg-white p-3">
@@ -116,15 +118,6 @@ function DecisionCard({ title, copy }: { title: string; copy: string }) {
     <div className="rounded border border-[#e1d8ca] bg-white p-4">
       <p className="font-semibold">{title}</p>
       <p className="mt-1 text-sm text-[#625d55]">{copy}</p>
-    </div>
-  );
-}
-
-function Fact({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between gap-4 border-b border-[#e5ded5] pb-2">
-      <dt className="text-[#625d55]">{label}</dt>
-      <dd className="text-right font-medium">{value}</dd>
     </div>
   );
 }

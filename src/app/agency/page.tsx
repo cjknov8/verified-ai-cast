@@ -1,5 +1,6 @@
+import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
-import { Panel, SectionHeader, Stat } from "@/components/ui";
+import { Panel, PanelHeader, SectionHeader, Stat } from "@/components/ui";
 import { formatCurrency, projects, talents } from "@/lib/mock-data";
 
 export default function AgencyPage() {
@@ -25,12 +26,11 @@ export default function AgencyPage() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {talents.map((talent) => (
-          <Panel key={talent.id}>
+        <Panel key={talent.id}>
+          <PanelHeader eyebrow={talent.agency} title={talent.name} action={<Link href={`/talents/${talent.id}/policy`} className="border border-[#b9afa1] px-3 py-2 text-xs font-semibold text-[#31403d] hover:bg-[#e1dbd2]">Open policy</Link>} />
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm text-[#6b665d]">{talent.agency}</p>
-                <h2 className="mt-1 text-2xl font-semibold">{talent.name}</h2>
-                <p className="mt-2 text-sm text-[#625d55]">
+                <p className="mt-4 text-sm text-[#625d55]">
                   {talent.category} / {talent.territory}
                 </p>
               </div>

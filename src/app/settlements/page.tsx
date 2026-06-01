@@ -1,8 +1,10 @@
 import { AppShell } from "@/components/app-shell";
-import { Panel, SectionHeader, StatusPill } from "@/components/ui";
+import { Panel, PanelHeader, SectionHeader, Stat, StatusPill } from "@/components/ui";
 import { formatCurrency, getProject, getTalent, ledger } from "@/lib/mock-data";
 
 export default function SettlementsPage() {
+  const total = ledger.reduce((sum, entry) => sum + entry.amount, 0);
+  const held = ledger.filter((entry) => entry.status === "held").reduce((sum, entry) => sum + entry.amount, 0);
   return (
     <AppShell>
       <SectionHeader
@@ -11,7 +13,13 @@ export default function SettlementsPage() {
         description="The first version keeps the ledger simple: review fees, license fees, royalties, status, and the project each line belongs to."
       />
 
+      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+        <Stat label="Ledger volume" value={formatCurrency(total)} detail="Across recorded entries" />
+        <Stat label="Funds held" value={formatCurrency(held)} detail="Awaiting approval release" />
+        <Stat label="Ledger entries" value={String(ledger.length)} detail="License and review fees" />
+      </div>
       <Panel>
+        <PanelHeader eyebrow="Financial records" title="License and review fee ledger" description="Scan settlement state by project, represented talent, and amount." />
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="border-b border-[#ded8cd] text-xs uppercase tracking-[0.12em] text-[#837c71]">

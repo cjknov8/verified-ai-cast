@@ -13,6 +13,9 @@ The public experience should feel closer to a premium film-rights studio than a 
 - Added `/checkout` as an honest payment-preparation screen.
 - Added a checkout entry point from `/projects/new`.
 - Updated the internal console palette and navigation to match the public brand.
+- Reworked the internal console into grouped workspace navigation with active states.
+- Added a four-step project submission workspace with real form controls.
+- Added `/verify` as a public certificate lookup entry point.
 
 ## User Journey
 
@@ -54,8 +57,8 @@ Stripe reference:
 
 ### P1: Submission UX
 
-- Replace placeholder package blocks with real inputs and upload states.
-- Add a stepper for project details, files, scope, URL allowlist, review deposit, and confirmation.
+- Connect the current stepper inputs to persistent drafts.
+- Connect the upload surfaces to real file selection and storage progress.
 - Add save-and-resume behavior.
 - Add inline validation and upload progress.
 
@@ -72,4 +75,3 @@ Stripe reference:
 - Add automated Playwright screenshots.
 - Confirm keyboard navigation and focus states.
 - Review contrast, reduced-motion behavior, and semantic landmarks.
-

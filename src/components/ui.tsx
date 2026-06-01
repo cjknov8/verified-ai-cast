@@ -2,25 +2,49 @@ export function SectionHeader({
   eyebrow,
   title,
   description,
+  aside,
 }: {
   eyebrow: string;
   title: string;
   description: string;
+  aside?: React.ReactNode;
 }) {
   return (
-    <div className="mb-6 max-w-3xl">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8b6234]">{eyebrow}</p>
-      <h1 className="font-serif text-3xl text-[#17211f] sm:text-5xl">{title}</h1>
-      <p className="mt-3 text-sm leading-6 text-[#64706d] sm:text-base">{description}</p>
+    <div className="mb-7 flex flex-col justify-between gap-5 border-b border-[#d2cbc1] pb-6 lg:flex-row lg:items-end">
+      <div className="max-w-3xl">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8b6234]">{eyebrow}</p>
+        <h1 className="font-serif text-3xl leading-tight text-[#17211f] sm:text-5xl">{title}</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[#64706d] sm:text-base">{description}</p>
+      </div>
+      {aside ? <div className="shrink-0">{aside}</div> : null}
     </div>
   );
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <section className={`border border-[#d2cbc1] bg-[#f8f5ef] p-5 shadow-sm ${className}`}>{children}</section>;
+}
+
+export function PanelHeader({
+  eyebrow,
+  title,
+  description,
+  action,
+}: {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  action?: React.ReactNode;
+}) {
   return (
-    <section className={`border border-[#d2cbc1] bg-[#f8f5ef] p-5 shadow-sm ${className}`}>
-      {children}
-    </section>
+    <div className="flex flex-col justify-between gap-3 border-b border-[#ddd6cc] pb-4 sm:flex-row sm:items-start">
+      <div>
+        {eyebrow ? <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8b6234]">{eyebrow}</p> : null}
+        <h2 className={`${eyebrow ? "mt-2" : ""} text-base font-semibold text-[#21312e]`}>{title}</h2>
+        {description ? <p className="mt-1 max-w-xl text-sm leading-5 text-[#6c7773]">{description}</p> : null}
+      </div>
+      {action ? <div className="shrink-0">{action}</div> : null}
+    </div>
   );
 }
 
@@ -28,7 +52,7 @@ export function Stat({ label, value, detail }: { label: string; value: string; d
   return (
     <div className="border border-[#d2cbc1] bg-[#f8f5ef] p-4">
       <p className="text-xs uppercase tracking-[0.14em] text-[#827d75]">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-[#253b37]">{value}</p>
+      <p className="mt-3 text-2xl font-semibold text-[#253b37]">{value}</p>
       <p className="mt-1 text-sm text-[#68736f]">{detail}</p>
     </div>
   );
@@ -51,24 +75,35 @@ export function StatusPill({ status }: { status: string }) {
   };
 
   return (
-    <span className={`inline-flex rounded border px-2.5 py-1 text-xs font-medium ${styles[status] ?? styles.submitted}`}>
+    <span className={`inline-flex border px-2.5 py-1 text-xs font-semibold capitalize ${styles[status] ?? styles.submitted}`}>
       {status.replace("_", " ")}
     </span>
   );
 }
 
-export function PrimaryButton({ children }: { children: React.ReactNode }) {
-  return (
-    <button className="bg-[#253b37] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#31504a]">
-      {children}
-    </button>
-  );
+export function PrimaryButton({ children, type = "button" }: { children: React.ReactNode; type?: "button" | "submit" }) {
+  return <button type={type} className="bg-[#253b37] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#31504a]">{children}</button>;
 }
 
-export function SecondaryButton({ children }: { children: React.ReactNode }) {
+export function SecondaryButton({ children, type = "button" }: { children: React.ReactNode; type?: "button" | "submit" }) {
+  return <button type={type} className="border border-[#b9afa1] px-4 py-2.5 text-sm font-semibold text-[#31403d] hover:bg-[#e1dbd2]">{children}</button>;
+}
+
+export function Notice({ children, tone = "neutral" }: { children: React.ReactNode; tone?: "neutral" | "warning" | "success" }) {
+  const styles = {
+    neutral: "border-[#cbd3d0] bg-[#eef2f0] text-[#4a5b57]",
+    warning: "border-[#d7bd8d] bg-[#fbf4e5] text-[#72551d]",
+    success: "border-[#9db59b] bg-[#edf5ea] text-[#28522e]",
+  };
+
+  return <div className={`border p-3 text-sm leading-6 ${styles[tone]}`}>{children}</div>;
+}
+
+export function MetaRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <button className="border border-[#b9afa1] px-4 py-2.5 text-sm font-semibold text-[#31403d] hover:bg-[#e1dbd2]">
-      {children}
-    </button>
+    <div className="flex justify-between gap-4 border-b border-[#e1dbd2] py-2.5 text-sm">
+      <dt className="text-[#77817e]">{label}</dt>
+      <dd className="text-right font-medium text-[#31403d]">{value}</dd>
+    </div>
   );
 }

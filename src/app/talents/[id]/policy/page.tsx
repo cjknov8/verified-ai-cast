@@ -1,5 +1,5 @@
 import { AppShell } from "@/components/app-shell";
-import { Panel, PrimaryButton, SectionHeader, SecondaryButton } from "@/components/ui";
+import { Notice, Panel, PanelHeader, PrimaryButton, SectionHeader, SecondaryButton } from "@/components/ui";
 import { formatCurrency, getTalent } from "@/lib/mock-data";
 
 export default async function PolicyPage({ params }: { params: Promise<{ id: string }> }) {
@@ -14,9 +14,10 @@ export default async function PolicyPage({ params }: { params: Promise<{ id: str
         title={`${talent.name} approval policy`}
         description="Policy settings define what a producer may submit, what requires escalation, and what public disclosure must accompany an approved output."
       />
+      <div className="mb-6"><Notice tone="neutral">Policy changes should be versioned before backend launch. Existing certificates must retain the policy snapshot used at approval time.</Notice></div>
       <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
         <Panel>
-          <h2 className="text-lg font-semibold">Commercial guardrails</h2>
+          <PanelHeader eyebrow="Policy summary" title="Commercial guardrails" description="Set the default threshold for new appearance review requests." />
           <div className="mt-4 space-y-4 text-sm">
             <label className="block">
               <span className="text-[#625d55]">Review SLA</span>
@@ -50,7 +51,7 @@ export default async function PolicyPage({ params }: { params: Promise<{ id: str
 function PolicyList({ title, items }: { title: string; items: string[] }) {
   return (
     <Panel>
-      <h2 className="text-lg font-semibold">{title}</h2>
+      <PanelHeader title={title} />
       <div className="mt-3 grid gap-2 sm:grid-cols-2">
         {items.map((item) => (
           <label key={item} className="flex items-start gap-3 rounded border border-[#e1d8ca] bg-white p-3 text-sm">

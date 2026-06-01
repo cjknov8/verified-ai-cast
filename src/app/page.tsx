@@ -40,6 +40,7 @@ export default function Home() {
             <a href="#framework" className="hover:text-white">Framework</a>
             <a href="#certificate" className="hover:text-white">Certificate</a>
             <a href="#pricing" className="hover:text-white">Pricing</a>
+            <Link href="/verify" className="hover:text-white">Lookup</Link>
             <Link href="/operations" className="hover:text-white">Console</Link>
           </nav>
           <Link

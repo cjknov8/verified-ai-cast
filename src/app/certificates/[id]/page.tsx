@@ -1,154 +1,72 @@
-import { AppShell } from "@/components/app-shell";
-import { Panel, SectionHeader, StatusPill } from "@/components/ui";
-import {
-  getCertificate,
-  getProject,
-  getTalent,
-  isApprovedSourceUrl,
-} from "@/lib/mock-data";
+import Link from "next/link";
+import { StatusPill } from "@/components/ui";
+import { getCertificate, getProject, getTalent, isApprovedSourceUrl } from "@/lib/mock-data";
 
-export default async function CertificatePage({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ source?: string | string[] }>;
-}) {
+export default async function CertificatePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ source?: string | string[] }> }) {
   const { id } = await params;
   const { source } = await searchParams;
   const certificate = getCertificate(id);
   const project = getProject(certificate.projectId);
   const talent = getTalent(project.talentId);
   const claimedSourceUrl = Array.isArray(source) ? source[0] : source;
-  const sourceMatches = claimedSourceUrl
-    ? isApprovedSourceUrl(certificate, claimedSourceUrl)
-    : null;
+  const sourceMatches = claimedSourceUrl ? isApprovedSourceUrl(certificate, claimedSourceUrl) : null;
 
   return (
-    <AppShell>
-      <div className="rounded border border-[#cfc0a8] bg-[#16302b] p-6 text-white sm:p-8">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#d8c7a6]">Public certification page</p>
-        <h1 className="mt-4 max-w-3xl text-3xl font-semibold tracking-tight sm:text-5xl">
-          Official AI appearance approval for {project.title}
-        </h1>
-        <p className="mt-4 max-w-2xl text-sm leading-6 text-white/75">
-          This page verifies that the submitted AI video result was reviewed and approved under the represented actor policy.
-        </p>
+    <main className="min-h-screen bg-[#111817] text-white">
+      <header className="border-b border-white/10">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
+          <Link href="/" className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">VA</span><span className="text-xs font-semibold uppercase tracking-[0.14em]">Verified AI Cast</span></Link>
+          <Link href="/verify" className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">Certificate lookup</Link>
+        </div>
+      </header>
+      <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/12 pb-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b477]">Public appearance certificate</p>
+          <StatusPill status={certificate.status} />
+        </div>
+        <h1 className="mt-8 max-w-4xl font-serif text-4xl leading-tight sm:text-6xl">Official AI appearance approval for {project.title}</h1>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-white/60">This public record identifies the reviewed project, represented talent, approval state, and exact publishing URLs covered by the decision.</p>
+
+        <div className="mt-10 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
+          <Fact label="Certificate" value={certificate.id} />
+          <Fact label="Actor" value={talent.name} />
+          <Fact label="Agency" value={talent.agency} />
+          <Fact label="Expires" value={certificate.expiresAt} />
+        </div>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.74fr]">
+          <section className="border border-white/12 bg-[#182321] p-5 sm:p-7">
+            <p className="text-xs uppercase tracking-[0.16em] text-[#d4b477]">Approved scope</p>
+            <p className="mt-4 text-base leading-7 text-white/72">{certificate.licenseScope}</p>
+            <div className="mt-7 border-t border-white/10 pt-5">
+              <p className="text-xs uppercase tracking-[0.14em] text-white/42">Approved publishing URLs</p>
+              <div className="mt-3 space-y-3">{certificate.approvedUrls.map((url) => <p key={url} className="break-all border border-white/10 bg-[#111817] p-3 font-mono text-sm text-[#c6dfd4]">{url}</p>)}</div>
+            </div>
+          </section>
+          <section className="border border-white/12 bg-[#182321] p-5 sm:p-7">
+            <p className="text-xs uppercase tracking-[0.16em] text-[#d4b477]">Verify a source URL</p>
+            <p className="mt-3 text-sm leading-6 text-white/58">Paste the page claiming this certificate. A copied link does not approve a different URL.</p>
+            <form className="mt-5 space-y-3">
+              <input name="source" type="url" defaultValue={claimedSourceUrl} placeholder="https://example.com/published-work" className="w-full border border-white/18 bg-[#111817] px-3 py-3 text-sm text-white placeholder:text-white/28" />
+              <button className="bg-[#d4b477] px-4 py-2.5 text-sm font-semibold text-[#111817] hover:bg-[#e3c98f]">Verify source</button>
+            </form>
+            <VerificationResult claimedSourceUrl={claimedSourceUrl} sourceMatches={sourceMatches} status={certificate.status} />
+            <div className="mt-6 border-t border-white/10 pt-5"><p className="text-xs uppercase tracking-[0.14em] text-white/42">Verification hash</p><p className="mt-2 break-all font-mono text-sm text-[#c6dfd4]">{certificate.verificationHash}</p></div>
+          </section>
+        </div>
       </div>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.75fr]">
-        <Panel>
-          <SectionHeader
-            eyebrow="Certificate"
-            title={certificate.id}
-            description={certificate.licenseScope}
-          />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <CertFact label="Actor" value={talent.name} />
-            <CertFact label="Agency" value={talent.agency} />
-            <CertFact label="Producer" value={project.producer} />
-            <CertFact label="Status" value={certificate.status} />
-            <CertFact label="Issued" value={certificate.issuedAt} />
-            <CertFact label="Expires" value={certificate.expiresAt} />
-          </div>
-        </Panel>
-        <Panel>
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Verification</h2>
-            <StatusPill status={certificate.status} />
-          </div>
-          <div className="mt-4 rounded border border-[#d6cdbf] bg-white p-4">
-            <p className="text-xs uppercase tracking-[0.14em] text-[#837c71]">Verification hash</p>
-            <p className="mt-2 font-mono text-lg font-semibold text-[#16302b]">{certificate.verificationHash}</p>
-          </div>
-          <p className="mt-4 text-sm leading-6 text-[#625d55]">
-            This certificate is valid only for the approved publishing URLs below.
-            A copied certificate link does not approve a different source URL.
-          </p>
-        </Panel>
-      </div>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_0.75fr]">
-        <Panel>
-          <h2 className="text-lg font-semibold">Approved publishing URLs</h2>
-          <div className="mt-4 space-y-3">
-            {certificate.approvedUrls.map((url) => (
-              <div key={url} className="rounded border border-[#e1d8ca] bg-white p-4">
-                <p className="break-all font-mono text-sm text-[#31554f]">{url}</p>
-              </div>
-            ))}
-          </div>
-        </Panel>
-        <Panel>
-          <h2 className="text-lg font-semibold">Check a source URL</h2>
-          <p className="mt-2 text-sm leading-6 text-[#625d55]">
-            Paste the page claiming this certificate to confirm whether it is on the approved URL list.
-          </p>
-          <form className="mt-4 space-y-3">
-            <label className="block">
-              <span className="text-xs uppercase tracking-[0.14em] text-[#837c71]">Claimed source URL</span>
-              <input
-                name="source"
-                type="url"
-                defaultValue={claimedSourceUrl}
-                placeholder="https://example.com/published-work"
-                className="mt-2 w-full rounded border border-[#cfc7ba] bg-white px-3 py-2 text-sm"
-              />
-            </label>
-            <button className="rounded bg-[#16302b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#21483f]">
-              Verify source
-            </button>
-          </form>
-          <SourceVerificationResult
-            claimedSourceUrl={claimedSourceUrl}
-            sourceMatches={sourceMatches}
-            certificateStatus={certificate.status}
-          />
-        </Panel>
-      </div>
-    </AppShell>
+    </main>
   );
 }
 
-function CertFact({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded border border-[#e1d8ca] bg-white p-4">
-      <p className="text-xs uppercase tracking-[0.14em] text-[#837c71]">{label}</p>
-      <p className="mt-2 font-medium">{value}</p>
-    </div>
-  );
+function Fact({ label, value }: { label: string; value: string }) {
+  return <div className="bg-[#182321] p-4"><p className="text-xs uppercase tracking-[0.14em] text-white/38">{label}</p><p className="mt-2 text-sm text-white/86">{value}</p></div>;
 }
 
-function SourceVerificationResult({
-  claimedSourceUrl,
-  sourceMatches,
-  certificateStatus,
-}: {
-  claimedSourceUrl?: string;
-  sourceMatches: boolean | null;
-  certificateStatus: "active" | "revoked" | "expired";
-}) {
-  if (!claimedSourceUrl) {
-    return (
-      <p className="mt-4 rounded border border-[#d8cebf] bg-[#f6f4ef] p-3 text-sm text-[#625d55]">
-        Enter a source URL to check whether this certificate may be displayed there.
-      </p>
-    );
-  }
-
-  if (certificateStatus !== "active") {
-    return (
-      <p className="mt-4 rounded border border-[#d08d8a] bg-[#fff0ef] p-3 text-sm text-[#8a2b27]">
-        This certificate is {certificateStatus}. It must not be presented as an active approval.
-      </p>
-    );
-  }
-
-  return sourceMatches ? (
-    <p className="mt-4 rounded border border-[#9db59b] bg-[#edf5ea] p-3 text-sm text-[#28522e]">
-      Verified: this URL is included in the approved publishing scope.
-    </p>
-  ) : (
-    <p className="mt-4 rounded border border-[#d08d8a] bg-[#fff0ef] p-3 text-sm text-[#8a2b27]">
-      Not approved: this certificate link is being used on a URL outside its approved publishing scope.
-    </p>
-  );
+function VerificationResult({ claimedSourceUrl, sourceMatches, status }: { claimedSourceUrl?: string; sourceMatches: boolean | null; status: "active" | "revoked" | "expired" }) {
+  if (!claimedSourceUrl) return <p className="mt-4 border border-white/12 bg-white/5 p-3 text-sm text-white/55">Enter a source URL to confirm its publishing scope.</p>;
+  if (status !== "active") return <p className="mt-4 border border-[#a9615f] bg-[#4a2828] p-3 text-sm text-[#f2c2bd]">This certificate is {status}. It must not be presented as an active approval.</p>;
+  return sourceMatches
+    ? <p className="mt-4 border border-[#6f927f] bg-[#243a34] p-3 text-sm text-[#b9d6c6]">Verified: this URL is included in the approved publishing scope.</p>
+    : <p className="mt-4 border border-[#a9615f] bg-[#4a2828] p-3 text-sm text-[#f2c2bd]">Not approved: this URL is outside the approved publishing scope.</p>;
 }

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
-import { Panel, SectionHeader, Stat, StatusPill } from "@/components/ui";
+import { Panel, PanelHeader, SectionHeader, Stat, StatusPill } from "@/components/ui";
 import { certificates, formatCurrency, ledger, projects, talents } from "@/lib/mock-data";
 
 export default function OperationsPage() {
@@ -23,15 +23,9 @@ export default function OperationsPage() {
       </div>
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
         <Panel>
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-semibold">Review command center</h2>
-              <p className="text-sm text-[#78837f]">Prioritize submissions by risk, policy fit, and certification readiness.</p>
-            </div>
-            <Link href="/reviews/project-01" className="bg-[#c9a86c] px-4 py-2 text-sm font-semibold text-[#182321]">
+          <PanelHeader eyebrow="Queue" title="Review command center" description="Prioritize submissions by risk, policy fit, and certification readiness." action={<Link href="/reviews/project-01" className="bg-[#c9a86c] px-4 py-2 text-sm font-semibold text-[#182321]">
               Open review
-            </Link>
-          </div>
+            </Link>} />
           <div className="mt-5 overflow-x-auto">
             <table className="w-full min-w-[720px] text-left text-sm">
               <thead className="border-b border-[#d5cec5] text-xs uppercase tracking-[0.12em] text-[#7e7971]">
@@ -55,7 +49,7 @@ export default function OperationsPage() {
           </div>
         </Panel>
         <Panel>
-          <h2 className="text-lg font-semibold">Approval workflow</h2>
+          <PanelHeader eyebrow="Reference" title="Approval workflow" />
           <div className="mt-4 space-y-4 text-sm">
             {["Finished output submitted", "Policy and risk review", "Talent decision recorded", "Certificate issued", "Usage and settlement tracked"].map((item, index) => (
               <div key={item} className="flex gap-3 border-b border-[#e1dbd2] pb-3">

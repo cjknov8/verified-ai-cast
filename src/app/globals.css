@@ -37,6 +37,21 @@ a:hover {
   transform: translateY(-1px);
 }
 
+.field {
+  width: 100%;
+  border: 1px solid #c5baad;
+  background: white;
+  padding: 0.7rem 0.8rem;
+  color: #31403d;
+  font-size: 0.875rem;
+}
+
+.field:focus {
+  border-color: #8b6234;
+  outline: 2px solid rgba(139, 98, 52, 0.18);
+  outline-offset: 1px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .scroll-reveal {
     animation: section-reveal linear both;
