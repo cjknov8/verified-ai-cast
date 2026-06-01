@@ -50,6 +50,11 @@ npm exec vercel -- --version
 
 - `docs/product-spec.md`
 - `docs/deployment-checklist.md`
+- `docs/product_architecture.md`
+- `docs/certificate_model.md`
+- `docs/trust_verification_framework.md`
+- `docs/roadmap_phase2.md`
+- `legal/` counsel-review product policy outlines
 
 ## Next Phases
 

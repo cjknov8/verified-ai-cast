@@ -1,12 +1,22 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { Panel, PrimaryButton, SectionHeader, SecondaryButton, StatusPill } from "@/components/ui";
-import { formatCurrency, getProject, getTalent } from "@/lib/mock-data";
+import {
+  formatCurrency,
+  getAuditLogsForProject,
+  getCertificate,
+  getProject,
+  getTalent,
+} from "@/lib/mock-data";
 
 export default async function ReviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const project = getProject(id);
   const talent = getTalent(project.talentId);
+  const auditLogs = getAuditLogsForProject(project.id);
+  const certificate = project.certificateId
+    ? getCertificate(project.certificateId)
+    : null;
 
   return (
     <AppShell>
@@ -31,15 +41,17 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
               </div>
             </div>
           </div>
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
             <DecisionCard title="Approve" copy="Issue certificate and release license terms." />
             <DecisionCard title="Request changes" copy="Send revision notes while holding review fee." />
             <DecisionCard title="Reject" copy="Block certification and record policy reason." />
+            <DecisionCard title="Revoke" copy="Deactivate an issued certificate and preserve the reason in the audit log." />
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <PrimaryButton>Approve and issue certificate</PrimaryButton>
             <SecondaryButton>Request modifications</SecondaryButton>
             <SecondaryButton>Reject submission</SecondaryButton>
+            <SecondaryButton>Revoke certificate</SecondaryButton>
           </div>
         </Panel>
         <div className="grid gap-5">
@@ -65,6 +77,33 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
                 View public certificate
               </Link>
             ) : null}
+          </Panel>
+          {certificate ? (
+            <Panel>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-lg font-semibold">Issued certificate</h2>
+                <StatusPill status={certificate.status} />
+              </div>
+              <p className="mt-3 font-mono text-sm text-[#31554f]">{certificate.id}</p>
+              <p className="mt-2 text-sm text-[#625d55]">
+                {certificate.approvedUrls.length} approved publishing URLs
+              </p>
+            </Panel>
+          ) : null}
+          <Panel>
+            <h2 className="text-lg font-semibold">Audit log</h2>
+            <div className="mt-3 space-y-3">
+              {auditLogs.map((entry) => (
+                <div key={entry.id} className="rounded border border-[#e1d8ca] bg-white p-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <StatusPill status={entry.action} />
+                    <time className="text-xs text-[#837c71]">{entry.createdAt}</time>
+                  </div>
+                  <p className="mt-2 text-sm font-medium">{entry.actorName}</p>
+                  <p className="mt-1 text-sm leading-5 text-[#625d55]">{entry.note}</p>
+                </div>
+              ))}
+            </div>
           </Panel>
         </div>
       </div>

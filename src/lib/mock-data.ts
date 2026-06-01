@@ -3,7 +3,18 @@ export type ReviewStatus =
   | "reviewing"
   | "changes_requested"
   | "approved"
-  | "rejected";
+  | "rejected"
+  | "revoked";
+
+export type CertificateStatus = "active" | "revoked" | "expired";
+
+export type AuditAction =
+  | "submitted"
+  | "review_started"
+  | "approved"
+  | "rejected"
+  | "changes_requested"
+  | "revoked";
 
 export type TalentPolicy = {
   talentId: string;
@@ -46,10 +57,25 @@ export type Project = {
 export type Certificate = {
   id: string;
   projectId: string;
+  status: CertificateStatus;
   issuedAt: string;
   expiresAt: string;
+  approvedUrls: string[];
   verificationHash: string;
   licenseScope: string;
+  revokedAt?: string;
+  revocationReason?: string;
+};
+
+export type AuditLogEntry = {
+  id: string;
+  projectId: string;
+  certificateId?: string;
+  action: AuditAction;
+  actorType: "creator" | "agency" | "platform";
+  actorName: string;
+  createdAt: string;
+  note: string;
 };
 
 export type LedgerEntry = {
@@ -160,17 +186,152 @@ export const projects: Project[] = [
     reviewerNotes: ["Approved with certificate placement in opening slate."],
     certificateId: "cert-2026-0007",
   },
+  {
+    id: "project-04",
+    title: "North Harbor Virtual Host Pilot",
+    producer: "North Harbor Media",
+    talentId: "talent-02",
+    status: "revoked",
+    submittedAt: "2026-03-12",
+    intendedUse: "Virtual event host pilot",
+    territory: "US",
+    duration: "3 months",
+    budget: 32000,
+    riskFlags: ["Certificate revoked after an unapproved derivative edit was published"],
+    reviewerNotes: ["Preserve the original approval record and block active certificate display."],
+    certificateId: "cert-2026-0005",
+  },
+  {
+    id: "project-05",
+    title: "Mori Atelier Spring Lookbook",
+    producer: "Mori Atelier",
+    talentId: "talent-01",
+    status: "approved",
+    submittedAt: "2025-03-02",
+    intendedUse: "Seasonal lookbook microsite",
+    territory: "KR",
+    duration: "12 months",
+    budget: 28000,
+    riskFlags: [],
+    reviewerNotes: ["Approval period ended. Retain certificate history for public verification."],
+    certificateId: "cert-2025-0018",
+  },
 ];
 
 export const certificates: Certificate[] = [
   {
     id: "cert-2026-0007",
     projectId: "project-03",
+    status: "active",
     issuedAt: "2026-05-03",
     expiresAt: "2027-02-03",
+    approvedUrls: [
+      "https://campaigns.lumaseoul.example/season-teaser",
+      "https://video.example.com/watch/luma-seoul-season-teaser",
+    ],
     verificationHash: "VAC-8F91-24C7-77A0",
     licenseScope:
       "Official AI appearance approval for streaming teaser, press microsite, and owned social channels.",
+  },
+  {
+    id: "cert-2026-0005",
+    projectId: "project-04",
+    status: "revoked",
+    issuedAt: "2026-03-15",
+    expiresAt: "2026-06-15",
+    approvedUrls: ["https://events.northharbor.example/virtual-host-pilot"],
+    verificationHash: "VAC-41B2-9D30-CC18",
+    licenseScope: "Virtual event host pilot on the approved event page only.",
+    revokedAt: "2026-04-02",
+    revocationReason: "An unapproved derivative edit was published outside the reviewed scope.",
+  },
+  {
+    id: "cert-2025-0018",
+    projectId: "project-05",
+    status: "expired",
+    issuedAt: "2025-03-10",
+    expiresAt: "2026-03-10",
+    approvedUrls: ["https://lookbook.moriatelier.example/spring-2025"],
+    verificationHash: "VAC-E581-771F-902A",
+    licenseScope: "Seasonal lookbook microsite approval for the Spring 2025 campaign.",
+  },
+];
+
+export const auditLogs: AuditLogEntry[] = [
+  {
+    id: "audit-001",
+    projectId: "project-01",
+    action: "submitted",
+    actorType: "creator",
+    actorName: "Vantage Pictures",
+    createdAt: "2026-05-10T09:12:00Z",
+    note: "Finished campaign film and supporting disclosure package submitted.",
+  },
+  {
+    id: "audit-002",
+    projectId: "project-01",
+    action: "review_started",
+    actorType: "agency",
+    actorName: "Aster Rights Studio",
+    createdAt: "2026-05-10T14:40:00Z",
+    note: "Agency review opened with voice similarity and disclosure placement flags.",
+  },
+  {
+    id: "audit-003",
+    projectId: "project-02",
+    action: "submitted",
+    actorType: "creator",
+    actorName: "Blueframe Lab",
+    createdAt: "2026-05-08T03:30:00Z",
+    note: "Interactive dealership screen package submitted.",
+  },
+  {
+    id: "audit-004",
+    projectId: "project-02",
+    action: "changes_requested",
+    actorType: "agency",
+    actorName: "Northline Management",
+    createdAt: "2026-05-09T08:20:00Z",
+    note: "Replace the unapproved gesture clips before resubmission.",
+  },
+  {
+    id: "audit-005",
+    projectId: "project-03",
+    action: "submitted",
+    actorType: "creator",
+    actorName: "Arc Edit House",
+    createdAt: "2026-05-01T05:10:00Z",
+    note: "Streaming teaser and press microsite package submitted.",
+  },
+  {
+    id: "audit-006",
+    projectId: "project-03",
+    certificateId: "cert-2026-0007",
+    action: "approved",
+    actorType: "agency",
+    actorName: "Aster Rights Studio",
+    createdAt: "2026-05-03T11:00:00Z",
+    note: "Approved with certificate placement in the opening slate and URL allowlist.",
+  },
+  {
+    id: "audit-007",
+    projectId: "project-04",
+    certificateId: "cert-2026-0005",
+    action: "approved",
+    actorType: "agency",
+    actorName: "Northline Management",
+    createdAt: "2026-03-15T04:00:00Z",
+    note: "Approved for the reviewed pilot version and the event page URL only.",
+  },
+  {
+    id: "audit-008",
+    projectId: "project-04",
+    certificateId: "cert-2026-0005",
+    action: "revoked",
+    actorType: "agency",
+    actorName: "Northline Management",
+    createdAt: "2026-04-02T10:15:00Z",
+    note: "Revoked after an unapproved derivative edit was published outside scope.",
   },
 ];
 
@@ -214,6 +375,32 @@ export function getProject(id: string) {
 
 export function getCertificate(id: string) {
   return certificates.find((certificate) => certificate.id === id) ?? certificates[0];
+}
+
+export function getAuditLogsForProject(projectId: string) {
+  return auditLogs.filter((entry) => entry.projectId === projectId);
+}
+
+export function normalizeSourceUrl(value: string) {
+  try {
+    const url = new URL(value);
+    url.hash = "";
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return null;
+  }
+}
+
+export function isApprovedSourceUrl(certificate: Certificate, claimedSourceUrl: string) {
+  const normalizedClaim = normalizeSourceUrl(claimedSourceUrl);
+
+  if (!normalizedClaim) {
+    return false;
+  }
+
+  return certificate.approvedUrls.some(
+    (approvedUrl) => normalizeSourceUrl(approvedUrl) === normalizedClaim,
+  );
 }
 
 export function formatCurrency(value: number) {
