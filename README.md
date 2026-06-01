@@ -54,6 +54,7 @@ npm exec vercel -- --version
 - `docs/certificate_model.md`
 - `docs/trust_verification_framework.md`
 - `docs/roadmap_phase2.md`
+- `docs/frontend_ux_roadmap.md`
 - `legal/` counsel-review product policy outlines
 
 ## Next Phases

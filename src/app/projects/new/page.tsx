@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 import { Panel, PrimaryButton, SectionHeader, SecondaryButton } from "@/components/ui";
 import { talents } from "@/lib/mock-data";
@@ -54,6 +55,15 @@ export default function NewProjectPage() {
                 </p>
               </div>
             ))}
+          </div>
+          <div className="mt-5 border-t border-[#e1d8ca] pt-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8b6234]">Review deposit</p>
+            <p className="mt-2 text-sm leading-6 text-[#64706d]">
+              Reserve the policy review before final submission. Payment processing will connect during the backend phase.
+            </p>
+            <Link href="/checkout" className="mt-4 inline-flex bg-[#253b37] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#31504a]">
+              Review payment step
+            </Link>
           </div>
         </Panel>
       </div>

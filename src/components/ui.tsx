@@ -9,16 +9,16 @@ export function SectionHeader({
 }) {
   return (
     <div className="mb-6 max-w-3xl">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8b5d2f]">{eyebrow}</p>
-      <h1 className="text-3xl font-semibold tracking-tight text-[#141414] sm:text-4xl">{title}</h1>
-      <p className="mt-3 text-sm leading-6 text-[#625d55] sm:text-base">{description}</p>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#8b6234]">{eyebrow}</p>
+      <h1 className="font-serif text-3xl text-[#17211f] sm:text-5xl">{title}</h1>
+      <p className="mt-3 text-sm leading-6 text-[#64706d] sm:text-base">{description}</p>
     </div>
   );
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <section className={`rounded border border-[#d9d1c4] bg-[#fbfaf7] p-5 shadow-sm ${className}`}>
+    <section className={`border border-[#d2cbc1] bg-[#f8f5ef] p-5 shadow-sm ${className}`}>
       {children}
     </section>
   );
@@ -26,10 +26,10 @@ export function Panel({ children, className = "" }: { children: React.ReactNode;
 
 export function Stat({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="rounded border border-[#ddd4c7] bg-white p-4">
-      <p className="text-xs uppercase tracking-[0.14em] text-[#837c71]">{label}</p>
-      <p className="mt-2 text-2xl font-semibold text-[#16302b]">{value}</p>
-      <p className="mt-1 text-sm text-[#6b665d]">{detail}</p>
+    <div className="border border-[#d2cbc1] bg-[#f8f5ef] p-4">
+      <p className="text-xs uppercase tracking-[0.14em] text-[#827d75]">{label}</p>
+      <p className="mt-2 text-2xl font-semibold text-[#253b37]">{value}</p>
+      <p className="mt-1 text-sm text-[#68736f]">{detail}</p>
     </div>
   );
 }
@@ -59,7 +59,7 @@ export function StatusPill({ status }: { status: string }) {
 
 export function PrimaryButton({ children }: { children: React.ReactNode }) {
   return (
-    <button className="rounded bg-[#16302b] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#21483f]">
+    <button className="bg-[#253b37] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#31504a]">
       {children}
     </button>
   );
@@ -67,7 +67,7 @@ export function PrimaryButton({ children }: { children: React.ReactNode }) {
 
 export function SecondaryButton({ children }: { children: React.ReactNode }) {
   return (
-    <button className="rounded border border-[#bfb5a6] px-4 py-2.5 text-sm font-semibold text-[#312d28] hover:bg-[#ebe4d9]">
+    <button className="border border-[#b9afa1] px-4 py-2.5 text-sm font-semibold text-[#31403d] hover:bg-[#e1dbd2]">
       {children}
     </button>
   );
