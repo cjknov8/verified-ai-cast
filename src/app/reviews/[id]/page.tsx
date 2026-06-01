@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
-import { MetaRow, Notice, Panel, PanelHeader, PrimaryButton, SectionHeader, SecondaryButton, StatusPill } from "@/components/ui";
+import { ReviewDecisionConsole } from "@/components/review-decision-console";
+import { MetaRow, Notice, Panel, PanelHeader, SectionHeader, StatusPill } from "@/components/ui";
 import {
   formatCurrency,
   getAuditLogsForProject,
@@ -49,12 +50,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ id: str
             <DecisionCard title="Reject" copy="Block certification and record policy reason." />
             <DecisionCard title="Revoke" copy="Deactivate an issued certificate and preserve the reason in the audit log." />
           </div>
-          <div className="mt-5 flex flex-wrap gap-3">
-            <PrimaryButton>Approve and issue certificate</PrimaryButton>
-            <SecondaryButton>Request modifications</SecondaryButton>
-            <SecondaryButton>Reject submission</SecondaryButton>
-            <SecondaryButton>Revoke certificate</SecondaryButton>
-          </div>
+          <ReviewDecisionConsole projectId={project.id} initialStatus={project.status} />
         </Panel>
         <div className="grid gap-5">
           <Panel>

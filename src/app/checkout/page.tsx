@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DemoReservation } from "@/components/demo-reservation";
 
 export default function CheckoutPage() {
   return (
@@ -34,15 +35,7 @@ export default function CheckoutPage() {
             </div>
           </div>
           <div className="flex justify-between gap-4 py-5 text-sm"><span className="text-white/62">Due today</span><span className="text-lg font-semibold">$2,500 USD</span></div>
-          <button disabled className="w-full cursor-not-allowed bg-[#d4b477]/65 px-4 py-3 text-sm font-semibold text-[#111817]">
-            Stripe checkout activation pending
-          </button>
-          <p className="mt-4 text-xs leading-5 text-white/42">
-            Payment processing is intentionally disabled in this frontend MVP. Stripe Checkout will be connected during the backend phase.
-          </p>
-          <Link href="/projects/new" className="mt-5 inline-flex text-sm font-semibold text-[#e5cc98] hover:text-white">
-            Continue with demo submission
-          </Link>
+          <DemoReservation />
         </aside>
       </div>
     </main>
