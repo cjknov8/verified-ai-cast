@@ -9,22 +9,23 @@ const navGroups = [
     items: [
       { href: "/operations", label: "Operations", marker: "01" },
       { href: "/agency", label: "Talent roster", marker: "02" },
-      { href: "/settlements", label: "Settlement ledger", marker: "03" },
+      { href: "/pricing-model", label: "Pricing model", marker: "03" },
+      { href: "/settlements", label: "Settlement ledger", marker: "04" },
     ],
   },
   {
     label: "Approval tools",
     items: [
-      { href: "/projects/new", label: "Submit project", marker: "04" },
-      { href: "/reviews/project-01", label: "Review workspace", marker: "05" },
-      { href: "/talents/talent-01/policy", label: "Policy editor", marker: "06" },
+      { href: "/projects/new", label: "Submit project", marker: "05" },
+      { href: "/reviews/project-01", label: "Review workspace", marker: "06" },
+      { href: "/talents/talent-01/policy", label: "Policy editor", marker: "07" },
     ],
   },
   {
     label: "Public trust",
     items: [
-      { href: "/verify", label: "Certificate lookup", marker: "07" },
-      { href: "/certificates/cert-2026-0007", label: "Public certificate", marker: "08" },
+      { href: "/verify", label: "Certificate lookup", marker: "08" },
+      { href: "/certificates/cert-2026-0007", label: "Public certificate", marker: "09" },
     ],
   },
 ];

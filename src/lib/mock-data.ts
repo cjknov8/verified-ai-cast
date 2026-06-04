@@ -88,6 +88,199 @@ export type LedgerEntry = {
   date: string;
 };
 
+export type TalentCommercialTier = {
+  id: "emerging" | "select" | "signature" | "icon";
+  name: string;
+  scoreRange: string;
+  sellerProfile: string;
+  buyerFit: string;
+  baseLicenseFeeKrw: [number, number];
+  reviewFeeKrw: [number, number];
+  controlledRentalMonthlyKrw: [number, number];
+  platformServiceFeePercent: number;
+  minimumSellerPayoutPercent: number;
+  criteria: string[];
+};
+
+export type LicenseMultiplier = {
+  id: string;
+  label: string;
+  multiplier: string;
+  rationale: string;
+};
+
+export type PlatformRevenueLine = {
+  id: string;
+  name: string;
+  rate: string;
+  chargedTo: "buyer" | "seller" | "both" | "enterprise";
+  whenApplied: string;
+};
+
+export const talentCommercialTiers: TalentCommercialTier[] = [
+  {
+    id: "emerging",
+    name: "Emerging",
+    scoreRange: "0-54",
+    sellerProfile: "Independent actors, rising creators, niche genre performers, and new agency rosters.",
+    buyerFit: "Indie films, pitch decks, internal pilots, student-backed studios, local brand tests.",
+    baseLicenseFeeKrw: [800000, 2500000],
+    reviewFeeKrw: [300000, 700000],
+    controlledRentalMonthlyKrw: [500000, 1500000],
+    platformServiceFeePercent: 18,
+    minimumSellerPayoutPercent: 75,
+    criteria: [
+      "Limited national awareness",
+      "Small but verifiable body of credited work",
+      "Low endorsement conflict risk",
+      "Fast review turnaround expected",
+    ],
+  },
+  {
+    id: "select",
+    name: "Select",
+    scoreRange: "55-74",
+    sellerProfile: "Recognizable supporting actors, theater-to-screen talent, regional stars, and category specialists.",
+    buyerFit: "Regional campaigns, social-first launches, game trailers, branded shorts, controlled public pilots.",
+    baseLicenseFeeKrw: [2500000, 8000000],
+    reviewFeeKrw: [700000, 2000000],
+    controlledRentalMonthlyKrw: [1500000, 5000000],
+    platformServiceFeePercent: 18,
+    minimumSellerPayoutPercent: 76,
+    criteria: [
+      "Recognizable work in a defined market or genre",
+      "Moderate public association value",
+      "Manageable category conflict profile",
+      "Agency review needed before public use",
+    ],
+  },
+  {
+    id: "signature",
+    name: "Signature",
+    scoreRange: "75-89",
+    sellerProfile: "Lead actors, bankable drama or film names, high-trust narrators, and cross-market personalities.",
+    buyerFit: "Premium brand films, OTT promotion, national social campaigns, high-stakes product launches.",
+    baseLicenseFeeKrw: [8000000, 30000000],
+    reviewFeeKrw: [2000000, 7000000],
+    controlledRentalMonthlyKrw: [5000000, 20000000],
+    platformServiceFeePercent: 16,
+    minimumSellerPayoutPercent: 78,
+    criteria: [
+      "Strong filmography or campaign recall",
+      "Meaningful reputation risk if misused",
+      "Higher exclusivity and category conflict value",
+      "Manual agency and talent-side approval expected",
+    ],
+  },
+  {
+    id: "icon",
+    name: "Icon",
+    scoreRange: "90-100",
+    sellerProfile: "Top-tier actors, culturally iconic faces or voices, and globally recognized performers.",
+    buyerFit: "Enterprise campaigns, global launches, theatrical or streaming tentpoles, long-term ambassador work.",
+    baseLicenseFeeKrw: [30000000, 150000000],
+    reviewFeeKrw: [7000000, 20000000],
+    controlledRentalMonthlyKrw: [20000000, 80000000],
+    platformServiceFeePercent: 12,
+    minimumSellerPayoutPercent: 82,
+    criteria: [
+      "National or international recognition",
+      "High endorsement and reputational sensitivity",
+      "Scarcity value and likely exclusivity negotiation",
+      "Custom contract review before generation or release",
+    ],
+  },
+];
+
+export const licenseMultipliers: LicenseMultiplier[] = [
+  {
+    id: "owned-social",
+    label: "Owned social channels",
+    multiplier: "1.0x-1.5x",
+    rationale: "Lower media spend and easier URL control than paid distribution.",
+  },
+  {
+    id: "paid-ads",
+    label: "Paid digital advertising",
+    multiplier: "2.0x-3.0x",
+    rationale: "The talent likeness directly supports conversion and carries stronger endorsement risk.",
+  },
+  {
+    id: "all-digital",
+    label: "All digital channels",
+    multiplier: "2.0x",
+    rationale: "Broader reuse across web, social, email, marketplace, and partner pages.",
+  },
+  {
+    id: "global-territory",
+    label: "Global territory",
+    multiplier: "1.5x-2.5x",
+    rationale: "Increases market exposure, brand conflicts, and monitoring burden.",
+  },
+  {
+    id: "six-months",
+    label: "Six-month term",
+    multiplier: "3.0x",
+    rationale: "Longer public association window than a short campaign test.",
+  },
+  {
+    id: "twelve-months",
+    label: "Twelve-month term",
+    multiplier: "4.0x-5.0x",
+    rationale: "Approaches annual endorsement value and should be renegotiable at renewal.",
+  },
+  {
+    id: "voice-clone",
+    label: "Voice clone included",
+    multiplier: "1.25x-2.0x",
+    rationale: "Voice identity is separately sensitive and should require explicit approval.",
+  },
+  {
+    id: "category-exclusive",
+    label: "Category exclusivity",
+    multiplier: "2.0x-5.0x",
+    rationale: "Compensates the seller for blocked opportunities in the same sector.",
+  },
+];
+
+export const platformRevenueLines: PlatformRevenueLine[] = [
+  {
+    id: "marketplace-take",
+    name: "License marketplace service fee",
+    rate: "12%-18%",
+    chargedTo: "seller",
+    whenApplied: "Deducted from approved license fees after agency approval and certificate issuance.",
+  },
+  {
+    id: "buyer-trust-fee",
+    name: "Buyer trust and verification fee",
+    rate: "3%-5%",
+    chargedTo: "buyer",
+    whenApplied: "Added to public campaigns that need certificate hosting, monitoring, and URL verification.",
+  },
+  {
+    id: "review-workflow-fee",
+    name: "Paid review workflow fee",
+    rate: "KRW 300k-20m by tier",
+    chargedTo: "buyer",
+    whenApplied: "Charged for agency/talent review labor even if the work is rejected.",
+  },
+  {
+    id: "managed-seat",
+    name: "Agency operating seat",
+    rate: "Monthly SaaS subscription",
+    chargedTo: "seller",
+    whenApplied: "Optional for agencies managing multiple talent policies, audit logs, and settlement reports.",
+  },
+  {
+    id: "enterprise-trust",
+    name: "Enterprise trust infrastructure",
+    rate: "Custom annual contract",
+    chargedTo: "enterprise",
+    whenApplied: "For API verification, bulk certificates, takedown operations, and private compliance reporting.",
+  },
+];
+
 export const talents: Talent[] = [
   {
     id: "talent-01",
@@ -407,6 +600,14 @@ export function formatCurrency(value: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+export function formatCurrencyKrw(value: number) {
+  return new Intl.NumberFormat("ko-KR", {
+    style: "currency",
+    currency: "KRW",
     maximumFractionDigits: 0,
   }).format(value);
 }
