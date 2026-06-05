@@ -58,7 +58,7 @@ export function Stat({ label, value, detail }: { label: string; value: string; d
   );
 }
 
-export function StatusPill({ status }: { status: string }) {
+export function StatusPill({ status, locale = "en" }: { status: string; locale?: "en" | "ko" }) {
   const styles: Record<string, string> = {
     approved: "border-[#9db59b] bg-[#edf5ea] text-[#28522e]",
     reviewing: "border-[#c4b17e] bg-[#fbf4d8] text-[#6d5611]",
@@ -73,10 +73,25 @@ export function StatusPill({ status }: { status: string }) {
     held: "border-[#c4b17e] bg-[#fbf4d8] text-[#6d5611]",
     scheduled: "border-[#b7c0cc] bg-[#eef3f8] text-[#324b67]",
   };
+  const koLabels: Record<string, string> = {
+    approved: "승인",
+    reviewing: "검수 중",
+    changes_requested: "수정 요청",
+    rejected: "반려",
+    revoked: "철회",
+    expired: "만료",
+    active: "활성",
+    submitted: "제출됨",
+    review_started: "검수 시작",
+    paid: "지급 완료",
+    held: "보류",
+    scheduled: "예정",
+  };
+  const label = locale === "ko" ? (koLabels[status] ?? status) : status.replace("_", " ");
 
   return (
     <span className={`inline-flex border px-2.5 py-1 text-xs font-semibold capitalize ${styles[status] ?? styles.submitted}`}>
-      {status.replace("_", " ")}
+      {label}
     </span>
   );
 }
