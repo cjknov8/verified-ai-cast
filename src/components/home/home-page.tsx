@@ -115,15 +115,15 @@ const copy = {
     ],
     approvedUrl: "승인된 게시 URL",
     inspectCertificate: "인증서 확인",
-    pricingEyebrow: "시작 방식",
-    pricingTitle: "먼저 한 건만 검수하세요.",
+    pricingEyebrow: "비즈니스 모델",
+    pricingTitle: "처음부터 큰 비용을 걸 필요는 없습니다.",
     pricingBody:
-      "결제보다 중요한 것은 승인 가능성입니다. 완성본을 검수한 뒤, 승인된 경우에만 라이선스와 인증서로 이동합니다.",
-    priceLabel: "검수 예약금",
+      "배우의 등급, 사용 범위, 예상 노출, 공개 채널에 따라 고정형·성과형·혼합형으로 설계할 수 있습니다.",
+    priceLabel: "초기 상담",
     priceBody:
-      "정책 확인, 결과물 검수, 승인/수정/반려 기록을 포함합니다. 실제 청구 기능은 아직 연결하지 않았습니다.",
-    included: ["완성본 검수", "배우 정책 확인", "수정 요청 기록", "승인 시 인증서 발급"],
-    reserveReview: "검수 예약하기",
+      "먼저 사용 목적과 배우 등급을 확인합니다. 승인 가능성이 있는 건만 파일럿 견적으로 이동합니다.",
+    included: ["무료 상담", "파일럿 견적", "조회수 기반 옵션", "승인 후 정식 계약"],
+    reserveReview: "상담 요청하기",
     footer: "Verified AI Cast / 공식 AI 출연 인증",
     openConsole: "운영 콘솔 열기",
   },
@@ -296,23 +296,27 @@ export function HomePage({ locale }: { locale: Locale }) {
               {t.pricingBody}
             </p>
           </div>
-          <div className="mt-12 grid border-t border-[#ad9d8c] lg:grid-cols-[1fr_0.62fr]">
-            <div className="border-b border-[#ad9d8c] py-7 lg:border-r lg:px-7 lg:first:pl-0">
-              <p className="text-xs uppercase tracking-[0.16em] text-[#875b36]">{t.priceLabel}</p>
-              <p className="mt-4 font-serif text-6xl">$2,500</p>
-              <p className="mt-5 max-w-xl text-sm leading-6 text-[#596360]">
-                {t.priceBody}
-              </p>
+          {locale === "ko" ? (
+            <KoreanBusinessModels href={href} />
+          ) : (
+            <div className="mt-12 grid border-t border-[#ad9d8c] lg:grid-cols-[1fr_0.62fr]">
+              <div className="border-b border-[#ad9d8c] py-7 lg:border-r lg:px-7 lg:first:pl-0">
+                <p className="text-xs uppercase tracking-[0.16em] text-[#875b36]">{t.priceLabel}</p>
+                <p className="mt-4 font-serif text-6xl">$2,500</p>
+                <p className="mt-5 max-w-xl text-sm leading-6 text-[#596360]">
+                  {t.priceBody}
+                </p>
+              </div>
+              <div className="py-7 lg:px-7">
+                <ul className="space-y-3 text-sm text-[#485451]">
+                  {t.included.map((item) => <li key={item}>{item}</li>)}
+                </ul>
+                <Link href={href("/checkout")} className="mt-7 inline-flex bg-[#17211f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#24322f]">
+                  {t.reserveReview}
+                </Link>
+              </div>
             </div>
-            <div className="py-7 lg:px-7">
-              <ul className="space-y-3 text-sm text-[#485451]">
-                {t.included.map((item) => <li key={item}>{item}</li>)}
-              </ul>
-              <Link href={href("/checkout")} className="mt-7 inline-flex bg-[#17211f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#24322f]">
-                {t.reserveReview}
-              </Link>
-            </div>
-          </div>
+          )}
         </div>
       </section>
 
@@ -446,6 +450,78 @@ function KoreanTrustMap() {
         </div>
       </div>
     </section>
+  );
+}
+
+function KoreanBusinessModels({ href }: { href: (path: string) => string }) {
+  const models = [
+    {
+      name: "무료 상담",
+      price: "₩0",
+      body: "사용 목적, 배우 등급, 공개 채널을 먼저 확인합니다.",
+      fit: "첫 문의, 예산 확인",
+    },
+    {
+      name: "소액 파일럿",
+      price: "낮은 선불",
+      body: "내부 시안이나 제한 공개용으로 승인 가능성을 테스트합니다.",
+      fit: "스타트업, 숏폼, 피치 영상",
+    },
+    {
+      name: "조회수 연동",
+      price: "기본료 + 성과",
+      body: "YouTube·숏폼·캠페인 페이지 조회 구간에 따라 정산합니다.",
+      fit: "성과 예측이 어려운 캠페인",
+    },
+    {
+      name: "정액 라이선스",
+      price: "범위별 견적",
+      body: "기간, 지역, 매체, 독점 여부를 정해 한 번에 승인합니다.",
+      fit: "브랜드 필름, 광고, OTT",
+    },
+  ];
+
+  return (
+    <div className="mt-12">
+      <div className="grid gap-3 md:grid-cols-4">
+        {models.map((model) => (
+          <article key={model.name} className="min-h-64 border border-[#ad9d8c] bg-[#efe6d9] p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#875b36]">{model.fit}</p>
+            <h3 className="mt-8 text-xl font-semibold">{model.name}</h3>
+            <p className="mt-3 font-serif text-3xl text-[#17211f]">{model.price}</p>
+            <p className="mt-5 text-sm leading-6 text-[#596360]">{model.body}</p>
+          </article>
+        ))}
+      </div>
+      <div className="mt-8 grid gap-6 border-y border-[#ad9d8c] py-7 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#875b36]">추천 시작점</p>
+          <h3 className="mt-3 font-serif text-4xl leading-tight">상담은 가볍게, 정산은 사용량에 맞게.</h3>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <MiniModel title="기본료" body="배우 측 검수와 인증 운영 비용을 보전합니다." />
+          <MiniModel title="성과료" body="조회수, 광고 집행, 공개 기간에 따라 추가 정산합니다." />
+          <MiniModel title="상한선" body="구매자가 예산 리스크를 예측할 수 있게 월별 한도를 둡니다." />
+        </div>
+      </div>
+      <div className="mt-7 flex flex-wrap gap-3">
+        <Link href={href("/projects/new")} className="bg-[#17211f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#24322f]">
+          사용 목적부터 입력하기
+        </Link>
+        <Link href={href("/pricing-model")} className="border border-[#17211f]/35 px-5 py-3 text-sm font-semibold text-[#17211f] hover:bg-[#cfc1af]">
+          가격 모델 자세히 보기
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function MiniModel({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="border border-[#c8b9a7] bg-[#fbf8f1] p-4">
+      <p className="font-semibold">{title}</p>
+      <p className="mt-2 text-sm leading-6 text-[#596360]">{body}</p>
+    </div>
   );
 }
 
