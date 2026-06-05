@@ -8,15 +8,30 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: Arial, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", Helvetica, sans-serif;
-  --font-serif: Georgia, "Times New Roman", serif;
+  --font-sans: "Pretendard Variable", Pretendard, "SUIT Variable", SUIT, "Apple SD Gothic Neo", "Noto Sans KR", Arial, Helvetica, sans-serif;
+  --font-serif: "Nanum Myeongjo", "AppleMyungjo", Georgia, "Times New Roman", serif;
   --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", Helvetica, sans-serif;
+  font-family: "Pretendard Variable", Pretendard, "SUIT Variable", SUIT, "Apple SD Gothic Neo", "Noto Sans KR", Arial, Helvetica, sans-serif;
+}
+
+.ko-home {
+  word-break: keep-all;
+  text-wrap: pretty;
+}
+
+.ko-home h1,
+.ko-home h2,
+.ko-home h3 {
+  letter-spacing: 0;
+}
+
+.ko-home p {
+  letter-spacing: 0;
 }
 
 html {

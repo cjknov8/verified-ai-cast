@@ -71,39 +71,39 @@ const copy = {
   ko: {
     langName: "한국어",
     nav: {
-      framework: "승인 구조",
+      framework: "이용 방식",
       certificate: "인증서",
       pricing: "가격",
       lookup: "조회",
       console: "콘솔",
     },
-    cta: "승인 시작",
-    heroEyebrow: "공식 AI 출연 승인 인프라",
-    heroTitle: "모든 초상에는 최종 승인권이 필요합니다.",
+    cta: "검수 시작",
+    heroEyebrow: "배우가 직접 승인하는 AI 출연",
+    heroTitle: "공식 승인된 AI 출연만 공개하세요.",
     heroBody:
-      "AI로 구현된 출연 결과물을 실제 배우와 소속사가 검토합니다. 승인된 프로젝트와 URL에만 공개 인증서를 발급하고, 필요하면 철회할 수 있습니다.",
-    submitProject: "프로젝트 제출",
-    viewCertificate: "인증서 보기",
-    heroTags: ["배우 우선 검수", "URL 기반 인증서", "철회 가능한 승인"],
-    premiseEyebrow: "서비스 전제",
-    premiseTitle: "창작 도구가 아니라 공식 승인 주장을 통제합니다.",
+      "배우와 소속사가 AI 결과물을 확인합니다. 승인된 프로젝트와 URL에만 인증서를 발급합니다.",
+    submitProject: "검수 요청하기",
+    viewCertificate: "인증서 샘플 보기",
+    heroTags: ["배우 검수", "URL 인증", "철회 가능"],
+    premiseEyebrow: "왜 필요한가",
+    premiseTitle: "AI 영상은 많아져도, 공식 승인은 하나여야 합니다.",
     premiseBody: [
-      "AI 미디어는 어디서든 만들어질 수 있습니다. 하지만 공식 승인은 희소하고, 검증 가능하며, 상업적으로 의미 있어야 합니다.",
-      "Verified AI Cast는 완성된 AI 출연 결과물과 공개 배포 사이에 권리자 검수 레이어를 만듭니다. 제작자는 정당성을 얻고, 배우와 소속사는 경계·가시성·철회 권한을 유지합니다.",
+      "누구나 AI 영상을 만들 수 있습니다. 하지만 배우의 이름을 걸고 공개하려면 분명한 승인 기록이 필요합니다.",
+      "Verified AI Cast는 완성된 결과물을 배우 측이 검수하고, 승인된 URL에만 공개 인증서를 연결합니다.",
     ],
-    frameworkEyebrow: "승인 프레임워크",
-    frameworkTitle: "완성된 프레임에서 공식 공개까지.",
+    frameworkEyebrow: "작동 방식",
+    frameworkTitle: "제출, 검수, 인증까지 한 흐름으로.",
     frameworkBody:
-      "스튜디오, 배우 팀, 시청자가 같은 기준으로 확인할 수 있는 절차입니다. 각 단계는 Phase 2에서 변경 불가능한 audit event로 전환될 수 있게 설계합니다.",
+      "제작자는 결과물을 제출하고, 배우 측은 사용 범위를 확인합니다. 승인된 결과물만 인증서와 함께 공개됩니다.",
     trustPoints: [
-      ["01", "결과물 검수", "배우와 소속사는 통제되지 않는 에셋 라이브러리가 아니라 완성된 AI 출연 결과물을 검토합니다."],
-      ["02", "사용 범위 승인", "각 결정은 프로젝트, 공개 기간, 사용 조건, 게시 URL에 연결됩니다."],
-      ["03", "증명과 함께 공개", "활성 인증서를 통해 시청자는 공식 승인이 어디에 적용되는지 확인할 수 있습니다."],
+      ["01", "결과물 제출", "제작자가 완성된 AI 영상과 사용 목적, 게시 URL을 제출합니다."],
+      ["02", "배우 측 검수", "배우 또는 소속사가 초상, 음성, 문맥, 브랜드 리스크를 확인합니다."],
+      ["03", "인증서 공개", "승인된 URL에만 공식 인증서가 연결됩니다."],
     ],
     certificateEyebrow: "공개 인증서",
-    certificateTitle: "출처에서 직접 확인되는 신뢰.",
+    certificateTitle: "승인 여부를 링크 하나로 확인합니다.",
     certificateBody:
-      "인증서는 승인된 결과물과 승인된 URL에 귀속됩니다. 인증 링크를 다른 페이지에 붙인다고 승인 범위가 복사되지는 않습니다.",
+      "인증서는 프로젝트와 URL에 묶입니다. 다른 페이지에서 같은 링크를 써도 승인 범위가 자동으로 옮겨가지 않습니다.",
     certificateRecord: "Verified AI Cast / 공개 기록",
     active: "활성",
     certificateHeading: "Luma Seoul Season Teaser 공식 AI 출연 승인",
@@ -114,17 +114,17 @@ const copy = {
       ["상태", "활성"],
     ],
     approvedUrl: "승인된 게시 URL",
-    inspectCertificate: "공개 인증서 확인",
-    pricingEyebrow: "제작자 이용",
-    pricingTitle: "하나의 검수부터 시작합니다.",
+    inspectCertificate: "인증서 확인",
+    pricingEyebrow: "시작 방식",
+    pricingTitle: "먼저 한 건만 검수하세요.",
     pricingBody:
-      "첫 상업 단계는 단순해야 합니다. 완성된 결과물을 제출하고, 정책 검수를 받은 뒤, 승인된 경우에만 라이선스와 인증서 발급으로 이동합니다.",
-    priceLabel: "프로젝트 검수 예약금",
+      "결제보다 중요한 것은 승인 가능성입니다. 완성본을 검수한 뒤, 승인된 경우에만 라이선스와 인증서로 이동합니다.",
+    priceLabel: "검수 예약금",
     priceBody:
-      "정책 검토, 결과물 확인, 문서화된 결정을 포함합니다. 출연 승인이 완료된 뒤 별도 라이선스 조건이 발급됩니다.",
-    included: ["완성 결과물 검수", "배우 정책 비교", "수정 요청 지원", "승인 시 공개 인증서 발급"],
-    reserveReview: "검수 예약",
-    footer: "Verified AI Cast / 공식 AI 출연 승인 인프라",
+      "정책 확인, 결과물 검수, 승인/수정/반려 기록을 포함합니다. 실제 청구 기능은 아직 연결하지 않았습니다.",
+    included: ["완성본 검수", "배우 정책 확인", "수정 요청 기록", "승인 시 인증서 발급"],
+    reserveReview: "검수 예약하기",
+    footer: "Verified AI Cast / 공식 AI 출연 인증",
     openConsole: "운영 콘솔 열기",
   },
 } satisfies Record<Locale, Record<string, unknown>>;
@@ -134,7 +134,7 @@ export function HomePage({ locale }: { locale: Locale }) {
   const href = (path: string) => (locale === "ko" ? `/ko${path}` : path);
 
   return (
-    <main className="bg-[#0f1514] text-[#f5f0e7]">
+    <main className={`bg-[#0f1514] text-[#f5f0e7] ${locale === "ko" ? "ko-home" : ""}`}>
       <section className="relative min-h-[92svh] overflow-hidden border-b border-white/10">
         <Image
           src="/images/verified-ai-cast-hero.png"
@@ -218,6 +218,8 @@ export function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
+      {locale === "ko" ? <KoreanStudioSection /> : null}
+
       <section id="framework" className="scroll-reveal bg-[#e9e2d8] py-20 text-[#17211f] sm:py-28">
         <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#875b36]">{t.frameworkEyebrow}</p>
@@ -238,6 +240,8 @@ export function HomePage({ locale }: { locale: Locale }) {
           </div>
         </div>
       </section>
+
+      {locale === "ko" ? <KoreanTrustMap /> : null}
 
       <section id="certificate" className="scroll-reveal bg-[#111817] py-20 sm:py-28">
         <div className="mx-auto grid max-w-7xl gap-12 px-5 sm:px-8 lg:grid-cols-[0.78fr_1.22fr] lg:px-10">
@@ -351,6 +355,106 @@ function LanguageSelector({ locale }: { locale: Locale }) {
           </Link>
         );
       })}
+    </div>
+  );
+}
+
+function KoreanStudioSection() {
+  return (
+    <section className="scroll-reveal border-b border-white/10 bg-[#0f1514] py-20 sm:py-28">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 sm:px-8 lg:grid-cols-[0.95fr_1.05fr] lg:px-10">
+        <div className="relative min-h-[360px] overflow-hidden border border-white/12 bg-[#182321] sm:min-h-[520px]">
+          <Image
+            src="/images/ko-approval-studio.png"
+            alt="공식 AI 출연 검수를 표현한 영화적 스튜디오 이미지"
+            fill
+            className="object-cover"
+            sizes="(min-width: 1024px) 48vw, 100vw"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(15,21,20,0.02)_0%,rgba(15,21,20,0.42)_100%)]" />
+          <div className="absolute bottom-5 left-5 right-5 border border-white/16 bg-[#0f1514]/76 p-4 backdrop-blur">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#d4b477]">Review room</p>
+            <p className="mt-2 text-sm leading-6 text-white/72">
+              배우 측이 확인한 결과물만 공개 인증으로 이어집니다.
+            </p>
+          </div>
+        </div>
+        <div className="self-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#d4b477]">For brands and studios</p>
+          <h2 className="mt-4 max-w-xl font-serif text-4xl leading-tight text-white sm:text-6xl">
+            “승인받은 AI 출연”을 분명하게 보여주세요.
+          </h2>
+          <div className="mt-8 grid gap-3">
+            {[
+              ["검수 전", "내부 시안과 실험 결과물은 공개 인증을 받을 수 없습니다."],
+              ["승인 후", "배우 측이 확인한 버전과 URL만 인증서에 연결됩니다."],
+              ["공개 중", "시청자와 파트너가 인증 링크로 승인 범위를 확인합니다."],
+            ].map(([title, body], index) => (
+              <div key={title} className="grid grid-cols-[44px_1fr] gap-4 border-t border-white/12 py-5">
+                <span className="font-mono text-sm text-[#d4b477]">0{index + 1}</span>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">{title}</h3>
+                  <p className="mt-1 text-sm leading-6 text-white/62">{body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function KoreanTrustMap() {
+  const layers = [
+    ["제출", "영상, 스크립트, 사용 목적, 게시 URL"],
+    ["검수", "초상권, 음성, 브랜드 리스크, 정책 기준"],
+    ["인증", "승인 상태, 만료일, URL allowlist"],
+    ["철회", "위반 발생 시 인증 비활성화와 기록 보존"],
+  ];
+
+  return (
+    <section className="scroll-reveal bg-[#efe8dd] py-20 text-[#17211f] sm:py-28">
+      <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-10">
+        <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#875b36]">Trust map</p>
+            <h2 className="mt-4 font-serif text-4xl leading-tight sm:text-6xl">
+              인증은 한 장의 배지가 아니라, 기록의 흐름입니다.
+            </h2>
+          </div>
+          <div className="grid gap-3 md:grid-cols-4">
+            {layers.map(([title, body], index) => (
+              <article key={title} className="relative min-h-56 border border-[#cdbfad] bg-[#fbf8f1] p-5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-[#875b36]">0{index + 1}</span>
+                  <span className="h-2 w-2 bg-[#b88a4c]" />
+                </div>
+                <h3 className="mt-16 text-xl font-semibold">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-[#5d6865]">{body}</p>
+                {index < layers.length - 1 ? (
+                  <div className="absolute -right-3 top-1/2 hidden h-px w-6 bg-[#b88a4c] md:block" />
+                ) : null}
+              </article>
+            ))}
+          </div>
+        </div>
+        <div className="mt-10 grid gap-4 border-y border-[#cdbfad] py-6 md:grid-cols-3">
+          <Metric label="공개 승인 기준" value="URL" detail="프로젝트와 게시 위치를 함께 검증" />
+          <Metric label="상태 관리" value="Active" detail="철회·만료 상태까지 공개 기록 유지" />
+          <Metric label="운영 기록" value="Audit" detail="승인, 반려, 수정 요청을 모두 보존" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Metric({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <div>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#875b36]">{label}</p>
+      <p className="mt-3 font-serif text-4xl text-[#17211f]">{value}</p>
+      <p className="mt-2 text-sm leading-6 text-[#5d6865]">{detail}</p>
     </div>
   );
 }
