@@ -131,6 +131,7 @@ const copy = {
 
 export function HomePage({ locale }: { locale: Locale }) {
   const t = copy[locale];
+  const href = (path: string) => (locale === "ko" ? `/ko${path}` : path);
 
   return (
     <main className="bg-[#0f1514] text-[#f5f0e7]">
@@ -161,13 +162,13 @@ export function HomePage({ locale }: { locale: Locale }) {
             <a href="#framework" className="hover:text-white">{t.nav.framework}</a>
             <a href="#certificate" className="hover:text-white">{t.nav.certificate}</a>
             <a href="#pricing" className="hover:text-white">{t.nav.pricing}</a>
-            <Link href="/verify" className="hover:text-white">{t.nav.lookup}</Link>
-            <Link href="/operations" className="hover:text-white">{t.nav.console}</Link>
+            <Link href={href("/verify")} className="hover:text-white">{t.nav.lookup}</Link>
+            <Link href={href("/operations")} className="hover:text-white">{t.nav.console}</Link>
           </nav>
           <div className="flex items-center gap-2">
             <LanguageSelector locale={locale} />
             <Link
-              href="/projects/new"
+              href={href("/projects/new")}
               className="hidden border border-[#d4b477]/70 bg-[#d4b477]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#f1d79f] hover:bg-[#d4b477]/20 sm:inline-flex"
             >
               {t.cta}
@@ -187,10 +188,10 @@ export function HomePage({ locale }: { locale: Locale }) {
               {t.heroBody}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/projects/new" className="bg-[#d4b477] px-5 py-3 text-sm font-semibold text-[#111817] hover:bg-[#e3c98f]">
+              <Link href={href("/projects/new")} className="bg-[#d4b477] px-5 py-3 text-sm font-semibold text-[#111817] hover:bg-[#e3c98f]">
                 {t.submitProject}
               </Link>
-              <Link href="/certificates/cert-2026-0007" className="border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10">
+              <Link href={href("/certificates/cert-2026-0007")} className="border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10">
                 {t.viewCertificate}
               </Link>
             </div>
@@ -272,7 +273,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <div className="px-5 py-6 sm:px-7">
               <p className="text-xs uppercase tracking-[0.14em] text-white/42">{t.approvedUrl}</p>
               <p className="mt-3 break-all font-mono text-sm text-[#c6dfd4]">https://campaigns.lumaseoul.example/season-teaser</p>
-              <Link href="/certificates/cert-2026-0007" className="mt-6 inline-flex border border-white/25 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10">
+              <Link href={href("/certificates/cert-2026-0007")} className="mt-6 inline-flex border border-white/25 px-4 py-2.5 text-sm font-semibold text-white hover:bg-white/10">
                 {t.inspectCertificate}
               </Link>
             </div>
@@ -303,7 +304,7 @@ export function HomePage({ locale }: { locale: Locale }) {
               <ul className="space-y-3 text-sm text-[#485451]">
                 {t.included.map((item) => <li key={item}>{item}</li>)}
               </ul>
-              <Link href="/checkout" className="mt-7 inline-flex bg-[#17211f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#24322f]">
+              <Link href={href("/checkout")} className="mt-7 inline-flex bg-[#17211f] px-5 py-3 text-sm font-semibold text-white hover:bg-[#24322f]">
                 {t.reserveReview}
               </Link>
             </div>
@@ -314,7 +315,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       <footer className="border-t border-white/10 bg-[#0f1514] px-5 py-6 text-xs uppercase tracking-[0.12em] text-white/45 sm:px-8 lg:px-10">
         <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4">
           <p>{t.footer}</p>
-          <Link href="/operations" className="text-white/65 hover:text-white">{t.openConsole}</Link>
+          <Link href={href("/operations")} className="text-white/65 hover:text-white">{t.openConsole}</Link>
         </div>
       </footer>
     </main>

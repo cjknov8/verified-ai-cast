@@ -1,0 +1,252 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { AppShell } from "@/components/app-shell";
+import { CertificateLookup } from "@/components/certificate-lookup";
+import { DemoReservation } from "@/components/demo-reservation";
+import { ReviewDecisionConsole } from "@/components/review-decision-console";
+import { SubmissionWorkspace } from "@/components/submission-workspace";
+import { MetaRow, Notice, Panel, PanelHeader, SectionHeader, Stat, StatusPill } from "@/components/ui";
+import {
+  certificates,
+  formatCurrency,
+  formatCurrencyKrw,
+  getAuditLogsForProject,
+  getCertificate,
+  getProject,
+  getTalent,
+  isApprovedSourceUrl,
+  ledger,
+  licenseMultipliers,
+  platformRevenueLines,
+  projects,
+  talentCommercialTiers,
+  talents,
+} from "@/lib/mock-data";
+
+export default async function KoreanRoute({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string[] }>;
+  searchParams: Promise<{ source?: string | string[] }>;
+}) {
+  const { slug } = await params;
+  const query = await searchParams;
+  const [first, second, third] = slug;
+
+  if (first === "operations" && slug.length === 1) return <OperationsKo />;
+  if (first === "agency" && slug.length === 1) return <AgencyKo />;
+  if (first === "pricing-model" && slug.length === 1) return <PricingModelKo />;
+  if (first === "settlements" && slug.length === 1) return <SettlementsKo />;
+  if (first === "verify" && slug.length === 1) return <VerifyKo />;
+  if (first === "checkout" && slug.length === 1) return <CheckoutKo />;
+  if (first === "projects" && second === "new" && slug.length === 2) return <NewProjectKo />;
+  if (first === "reviews" && second && slug.length === 2) return <ReviewKo id={second} />;
+  if (first === "certificates" && second && slug.length === 2) return <CertificateKo id={second} source={query.source} />;
+  if (first === "talents" && second && third === "policy" && slug.length === 3) return <PolicyKo id={second} />;
+
+  notFound();
+}
+
+function OperationsKo() {
+  const pending = projects.filter((project) => !["approved", "revoked"].includes(project.status)).length;
+  const approved = certificates.filter((certificate) => certificate.status === "active").length;
+  const held = ledger.filter((entry) => entry.status === "held").reduce((sum, entry) => sum + entry.amount, 0);
+
+  return (
+    <AppShell locale="ko">
+      <SectionHeader eyebrow="운영 대시보드" title="배우의 평판을 보호하면서 공식 AI 출연 승인을 발급합니다." description="완성된 AI 영상 결과물을 검수하고, 결정을 기록하며, 공개 인증서 페이지를 발행하는 권리자 중심 운영 콘솔입니다." />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat label="대기 중인 검수" value={String(pending)} detail="소속사 큐 기준" />
+        <Stat label="활성 인증서" value={String(approved)} detail={`총 ${certificates.length}개 공개 기록`} />
+        <Stat label="관리 배우" value={String(talents.length)} detail="정책 기반 프로필" />
+        <Stat label="보류 금액" value={formatCurrency(held)} detail="승인 후 릴리즈" />
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
+        <Panel>
+          <PanelHeader eyebrow="검수 큐" title="검수 커맨드 센터" description="위험도, 정책 적합성, 인증 준비 상태를 기준으로 제출물을 우선순위화합니다." action={<Link href="/ko/reviews/project-01" className="bg-[#c9a86c] px-4 py-2 text-sm font-semibold text-[#182321]">검수 열기</Link>} />
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left text-sm">
+              <thead className="border-b border-[#d5cec5] text-xs uppercase tracking-[0.12em] text-[#7e7971]">
+                <tr><th className="py-3">프로젝트</th><th className="py-3">배우</th><th className="py-3">사용 목적</th><th className="py-3">상태</th><th className="py-3">예산</th></tr>
+              </thead>
+              <tbody className="divide-y divide-[#e1dbd2]">
+                {projects.map((project) => {
+                  const talent = talents.find((item) => item.id === project.talentId);
+                  return <tr key={project.id}><td className="py-4 font-medium">{project.title}</td><td className="py-4 text-[#67716e]">{talent?.name}</td><td className="py-4 text-[#67716e]">{project.intendedUse}</td><td className="py-4"><StatusPill status={project.status} /></td><td className="py-4 text-[#67716e]">{formatCurrency(project.budget)}</td></tr>;
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+        <Panel>
+          <PanelHeader eyebrow="참조" title="승인 워크플로우" />
+          <div className="mt-4 space-y-4 text-sm">
+            {["완성 결과물 제출", "정책 및 리스크 검토", "배우 측 결정 기록", "인증서 발급", "사용 및 정산 추적"].map((item, index) => (
+              <div key={item} className="flex gap-3 border-b border-[#e1dbd2] pb-3"><span className="font-mono text-xs text-[#9b713d]">0{index + 1}</span><p className="text-[#56615e]">{item}</p></div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+    </AppShell>
+  );
+}
+
+function AgencyKo() {
+  const totalBudget = projects.reduce((sum, project) => sum + project.budget, 0);
+  const pendingReviews = talents.reduce((sum, talent) => sum + talent.pendingReviews, 0);
+
+  return (
+    <AppShell locale="ko">
+      <SectionHeader eyebrow="소속사 대시보드" title="공개 전 공식 AI 출연을 통제합니다." description="수요를 검토하고, 배우의 경계를 보호하며, 어떤 AI 결과물이 배우의 이름을 공식적으로 사용할 수 있는지 결정하는 운영 공간입니다." />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Stat label="관리 배우" value={String(talents.length)} detail="검증된 프로필" />
+        <Stat label="대기 검수" value={String(pendingReviews)} detail="활성 정책 기준" />
+        <Stat label="파이프라인 금액" value={formatCurrency(totalBudget)} detail="제출 프로젝트 예산" />
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        {talents.map((talent) => (
+          <Panel key={talent.id}>
+            <PanelHeader eyebrow={talent.agency} title={talent.name} action={<Link href={`/ko/talents/${talent.id}/policy`} className="border border-[#b9afa1] px-3 py-2 text-xs font-semibold text-[#31403d] hover:bg-[#e1dbd2]">정책 열기</Link>} />
+            <div className="flex items-start justify-between gap-4">
+              <p className="mt-4 text-sm text-[#625d55]">{talent.category} / {talent.territory}</p>
+              <div className="rounded border border-[#d8cebf] bg-white px-3 py-2 text-right"><p className="text-xs uppercase tracking-[0.14em] text-[#837c71]">점수</p><p className="text-xl font-semibold text-[#16302b]">{talent.reputationScore}</p></div>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <div className="rounded border border-[#e1d8ca] bg-white p-3"><p className="text-xs text-[#837c71]">활성 라이선스</p><p className="mt-1 text-lg font-semibold">{talent.activeLicenses}</p></div>
+              <div className="rounded border border-[#e1d8ca] bg-white p-3"><p className="text-xs text-[#837c71]">최소 비용</p><p className="mt-1 text-lg font-semibold">{formatCurrency(talent.policy.minimumLicenseFee)}</p></div>
+            </div>
+          </Panel>
+        ))}
+      </div>
+    </AppShell>
+  );
+}
+
+function PricingModelKo() {
+  const accessibleEntry = talentCommercialTiers[0].baseLicenseFeeKrw[0];
+  const iconCeiling = talentCommercialTiers[talentCommercialTiers.length - 1].baseLicenseFeeKrw[1];
+  const range = (value: [number, number]) => `${formatCurrencyKrw(value[0])} - ${formatCurrencyKrw(value[1])}`;
+
+  return (
+    <AppShell locale="ko">
+      <SectionHeader eyebrow="2026 가격 모델" title="배우 가치, 사용 범위, 신뢰 운영 부담을 기준으로 공식 AI 출연 가격을 책정합니다." description="이 mock 모델은 생성 비용과 상업 권리를 분리합니다. 판매자는 동의, 평판 리스크, 희소성, 승인 노동에 대해 보상받고 구매자는 예측 가능한 범위와 인증서를 얻습니다." />
+      <div className="grid gap-4 sm:grid-cols-3">
+        <Stat label="입문 라이선스" value={formatCurrencyKrw(accessibleEntry)} detail="Emerging 배우, 제한 캠페인" />
+        <Stat label="등급 기준" value={String(talentCommercialTiers.length)} detail="KRW 기반 4단계" />
+        <Stat label="상위 맞춤 견적" value={`${formatCurrencyKrw(iconCeiling)}+`} detail="Icon 등급 엔터프라이즈 협상 전" />
+      </div>
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1.3fr_0.7fr]">
+        <Panel>
+          <PanelHeader eyebrow="배우 등급" title="판매자와 구매자가 모두 이해할 수 있는 가격대" description="등급은 필모그래피, 대중 인지도, 신뢰도, 카테고리 충돌, 지역, 독점성, 검수 부담을 가중 평가해 배정합니다." />
+          <div className="mt-5 overflow-x-auto">
+            <table className="w-full min-w-[980px] text-left text-sm">
+              <thead className="border-b border-[#ded8cd] text-xs uppercase tracking-[0.12em] text-[#837c71]"><tr><th className="py-3">등급</th><th className="py-3">기본 라이선스</th><th className="py-3">검수비</th><th className="py-3">제한 렌탈</th><th className="py-3">플랫폼 수수료</th><th className="py-3">판매자 정산</th></tr></thead>
+              <tbody className="divide-y divide-[#e4ded4]">
+                {talentCommercialTiers.map((tier) => <tr key={tier.id} className="align-top"><td className="py-4"><p className="font-semibold text-[#21312e]">{tier.name}</p><p className="mt-1 text-xs text-[#7a746c]">점수 {tier.scoreRange}</p><p className="mt-2 max-w-[230px] text-xs leading-5 text-[#6c7773]">{tier.sellerProfile}</p></td><td className="py-4 font-medium">{range(tier.baseLicenseFeeKrw)}</td><td className="py-4 text-[#625d55]">{range(tier.reviewFeeKrw)}</td><td className="py-4 text-[#625d55]">{range(tier.controlledRentalMonthlyKrw)} / 월</td><td className="py-4 text-[#625d55]">{tier.platformServiceFeePercent}%</td><td className="py-4 text-[#625d55]">최소 {tier.minimumSellerPayoutPercent}%</td></tr>)}
+              </tbody>
+            </table>
+          </div>
+        </Panel>
+        <Panel>
+          <PanelHeader eyebrow="평가 기준" title="등급 배정 규칙" />
+          <div className="mt-4 space-y-4 text-sm">
+            {["필모그래피: 주연/조연 크레딧, 최근성, 장르 권위, 수상 및 언론 인지도.", "시장 인지도: 검색 수요, 소셜 도달 품질, 지역/글로벌 인지도.", "신뢰와 리스크: 브랜드 안정성, 보증 민감도, 정책 제한.", "희소성: 독점성 압력, 경쟁 브랜드 충돌, AI 출연 허용 의지.", "운영 부담: 검수 SLA, 산출물 수, 음성 포함, URL 모니터링 부담."].map((item, index) => <div key={item} className="border-b border-[#e1dbd2] pb-3"><p className="font-mono text-xs text-[#9b713d]">0{index + 1}</p><p className="mt-1 leading-5 text-[#65706c]">{item}</p></div>)}
+          </div>
+        </Panel>
+      </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
+        <Panel><PanelHeader eyebrow="사용 배율" title="상업 노출 범위에 따라 가격을 조정합니다." description="구매자는 승인 요청 전에 견적이 왜 달라지는지 이해해야 합니다." /><div className="mt-5 grid gap-3">{licenseMultipliers.map((item) => <div key={item.id} className="grid gap-3 border border-[#e1dbd2] bg-white p-4 sm:grid-cols-[150px_90px_1fr]"><p className="font-semibold text-[#21312e]">{item.label}</p><p className="font-mono text-sm text-[#8b6234]">{item.multiplier}</p><p className="text-sm leading-5 text-[#64706d]">{item.rationale}</p></div>)}</div></Panel>
+        <Panel><PanelHeader eyebrow="비즈니스 모델" title="미승인 사용을 조장하지 않고 수익화합니다." description="수익은 검증 워크플로우, 인증, 모니터링, 거래 인프라에서 발생해야 합니다." /><div className="mt-5 space-y-3">{platformRevenueLines.map((line) => <div key={line.id} className="border border-[#e1dbd2] bg-white p-4"><div className="flex flex-col justify-between gap-2 sm:flex-row"><p className="font-semibold text-[#21312e]">{line.name}</p><p className="text-sm font-semibold text-[#8b6234]">{line.rate}</p></div><p className="mt-2 text-xs uppercase tracking-[0.12em] text-[#837c71]">청구 대상: {line.chargedTo}</p><p className="mt-2 text-sm leading-5 text-[#64706d]">{line.whenApplied}</p></div>)}</div></Panel>
+      </div>
+    </AppShell>
+  );
+}
+
+function SettlementsKo() {
+  const total = ledger.reduce((sum, entry) => sum + entry.amount, 0);
+  const held = ledger.filter((entry) => entry.status === "held").reduce((sum, entry) => sum + entry.amount, 0);
+  return (
+    <AppShell locale="ko">
+      <SectionHeader eyebrow="정산 장부" title="승인된 배우 사용에 연결된 금액을 추적합니다." description="첫 버전은 검수비, 라이선스 비용, 로열티, 상태, 연결 프로젝트를 단순 장부로 관리합니다." />
+      <div className="mb-6 grid gap-4 sm:grid-cols-3"><Stat label="장부 총액" value={formatCurrency(total)} detail="기록된 항목 기준" /><Stat label="보류 금액" value={formatCurrency(held)} detail="승인 릴리즈 대기" /><Stat label="장부 항목" value={String(ledger.length)} detail="라이선스 및 검수비" /></div>
+      <Panel><PanelHeader eyebrow="재무 기록" title="라이선스 및 검수비 장부" description="프로젝트, 배우, 금액별 정산 상태를 확인합니다." /><div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="border-b border-[#ded8cd] text-xs uppercase tracking-[0.12em] text-[#837c71]"><tr><th className="py-3">일자</th><th className="py-3">프로젝트</th><th className="py-3">배우</th><th className="py-3">유형</th><th className="py-3">상태</th><th className="py-3 text-right">금액</th></tr></thead><tbody className="divide-y divide-[#e4ded4]">{ledger.map((entry) => { const project = getProject(entry.projectId); const talent = getTalent(entry.talentId); return <tr key={entry.id}><td className="py-4 text-[#625d55]">{entry.date}</td><td className="py-4 font-medium">{project.title}</td><td className="py-4 text-[#625d55]">{talent.name}</td><td className="py-4 text-[#625d55]">{entry.type.replace("_", " ")}</td><td className="py-4"><StatusPill status={entry.status} /></td><td className="py-4 text-right font-semibold">{formatCurrency(entry.amount)}</td></tr>; })}</tbody></table></div></Panel>
+    </AppShell>
+  );
+}
+
+function VerifyKo() {
+  return <AppShell locale="ko"><SectionHeader eyebrow="공개 신뢰" title="출연 인증서를 조회합니다." description="공식 AI 출연 주장에 의존하기 전에 현재 인증서 상태를 확인하세요." /><div className="grid gap-6 lg:grid-cols-[1fr_0.7fr]"><Panel><PanelHeader eyebrow="인증서 조회" title="공개 인증서 ID 입력" description="활성 데모 기록: cert-2026-0007" /><CertificateLookup locale="ko" /></Panel><div className="space-y-4"><Notice tone="neutral">유효한 인증서도 승인된 게시 URL에만 적용됩니다. 인증서 페이지의 URL allowlist를 확인하세요.</Notice><Notice tone="warning">철회되거나 만료된 기록은 투명성을 위해 남지만 활성 승인처럼 표시하면 안 됩니다.</Notice></div></div></AppShell>;
+}
+
+function NewProjectKo() {
+  return <AppShell locale="ko"><SectionHeader eyebrow="제작자 제출" title="공식 출연 검수를 준비합니다." description="완성된 AI 결과물, 지원 기록, 배우 팀이 검토할 정확한 권리 범위를 제출합니다." /><SubmissionWorkspace locale="ko" /></AppShell>;
+}
+
+function CheckoutKo() {
+  return (
+    <main className="min-h-screen bg-[#111817] text-white">
+      <header className="border-b border-white/10"><div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8"><Link href="/ko" className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">VA</span><span className="text-sm font-semibold uppercase tracking-[0.16em]">Verified AI Cast</span></Link><p className="text-xs uppercase tracking-[0.14em] text-white/45">안전한 검수 예약</p></div></header>
+      <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_0.72fr] lg:py-20">
+        <section><p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b477]">제작자 온보딩</p><h1 className="mt-4 max-w-xl font-serif text-5xl leading-tight sm:text-6xl">공식 출연 검수를 예약합니다.</h1><p className="mt-5 max-w-xl text-base leading-7 text-white/62">검수 예약금부터 시작합니다. 실제 결제가 활성화되면 다음 단계에서 Stripe Checkout을 열고 프로젝트 제출로 돌아옵니다.</p><ol className="mt-10 space-y-5 border-t border-white/12 pt-6 text-sm text-white/72"><li className="flex gap-4"><span className="font-mono text-[#d4b477]">01</span><span>검수 슬롯을 예약합니다.</span></li><li className="flex gap-4"><span className="font-mono text-[#d4b477]">02</span><span>완성된 미디어 패키지를 제출합니다.</span></li><li className="flex gap-4"><span className="font-mono text-[#d4b477]">03</span><span>승인, 수정 요청, 또는 문서화된 반려를 받습니다.</span></li></ol></section>
+        <aside className="self-start border border-white/14 bg-[#182321] p-5 sm:p-7"><p className="text-xs uppercase tracking-[0.16em] text-[#d4b477]">주문 요약</p><div className="mt-6 border-b border-white/12 pb-5"><div className="flex justify-between gap-4"><div><p className="font-semibold">프로젝트 검수 예약금</p><p className="mt-1 text-sm text-white/52">완성된 AI 출연 결과물 1건</p></div><p className="font-semibold">$2,500</p></div></div><div className="flex justify-between gap-4 py-5 text-sm"><span className="text-white/62">오늘 결제 예정</span><span className="text-lg font-semibold">$2,500 USD</span></div><DemoReservation locale="ko" /></aside>
+      </div>
+    </main>
+  );
+}
+
+function ReviewKo({ id }: { id: string }) {
+  const project = getProject(id);
+  const talent = getTalent(project.talentId);
+  const auditLogs = getAuditLogsForProject(project.id);
+  const certificate = project.certificateId ? getCertificate(project.certificateId) : null;
+
+  return (
+    <AppShell locale="ko">
+      <SectionHeader eyebrow="제출된 AI 영상 검수" title={project.title} description="제출 결과물을 배우 정책과 비교한 뒤 승인, 반려, 수정 요청, 철회를 기록하는 검수자 워크스페이스입니다." aside={<StatusPill status={project.status} />} />
+      <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
+        <Panel><PanelHeader eyebrow="보안 스크리너" title="제출된 최종 결과물 검수" description="결정을 기록하기 전에 선언된 권리 범위와 배우 정책을 비교합니다." /><div className="mt-5 aspect-video border border-[#d6cdbf] bg-[#111817] p-5 text-white"><div className="flex h-full flex-col justify-between"><div className="flex items-center justify-between"><span className="border border-white/25 px-3 py-1 text-xs">보안 스크리너 placeholder</span><StatusPill status={project.status} /></div><div><p className="text-2xl font-semibold">{project.title}</p><p className="mt-2 max-w-xl text-sm text-white/70">영상 재생, 프레임 코멘트, 모델 출처 검사는 이후 이 영역에 연결됩니다.</p></div></div></div><div className="mt-5 grid gap-3 sm:grid-cols-2"><DecisionCardKo title="승인" copy="인증서를 발급하고 라이선스 조건을 릴리즈합니다." /><DecisionCardKo title="수정 요청" copy="검수비를 보류한 상태로 수정 메모를 보냅니다." /><DecisionCardKo title="반려" copy="인증을 차단하고 정책 사유를 기록합니다." /><DecisionCardKo title="철회" copy="발급된 인증서를 비활성화하고 audit log에 사유를 보존합니다." /></div><ReviewDecisionConsole projectId={project.id} initialStatus={project.status} locale="ko" /></Panel>
+        <div className="grid gap-5"><Panel><PanelHeader eyebrow="결정 맥락" title="제출 정보" /><dl className="mt-3"><MetaRow label="배우" value={talent.name} /><MetaRow label="제작자" value={project.producer} /><MetaRow label="지역" value={project.territory} /><MetaRow label="기간" value={project.duration} /><MetaRow label="예산" value={formatCurrency(project.budget)} /></dl></Panel><Panel><PanelHeader eyebrow="검수자 주의" title="리스크와 메모" /><div className="mt-3 space-y-2 text-sm">{[...project.riskFlags, ...project.reviewerNotes].map((item) => <Notice key={item} tone="warning">{item}</Notice>)}</div>{project.certificateId ? <Link href={`/ko/certificates/${project.certificateId}`} className="mt-4 inline-flex rounded bg-[#16302b] px-4 py-2 text-sm font-semibold text-white">공개 인증서 보기</Link> : null}</Panel>{certificate ? <Panel><PanelHeader eyebrow="공개 신뢰" title="발급 인증서" /><div className="flex items-center justify-between gap-3"><p className="mt-3 font-mono text-sm text-[#31554f]">{certificate.id}</p><StatusPill status={certificate.status} /></div><p className="mt-2 text-sm text-[#625d55]">승인 게시 URL {certificate.approvedUrls.length}개</p></Panel> : null}<Panel><PanelHeader eyebrow="변경 불가능한 이력" title="Audit log" /><div className="mt-3 space-y-3">{auditLogs.map((entry) => <div key={entry.id} className="rounded border border-[#e1d8ca] bg-white p-3"><div className="flex flex-wrap items-center justify-between gap-2"><StatusPill status={entry.action} /><time className="text-xs text-[#837c71]">{entry.createdAt}</time></div><p className="mt-2 text-sm font-medium">{entry.actorName}</p><p className="mt-1 text-sm leading-5 text-[#625d55]">{entry.note}</p></div>)}</div></Panel></div>
+      </div>
+    </AppShell>
+  );
+}
+
+function CertificateKo({ id, source }: { id: string; source?: string | string[] }) {
+  const certificate = getCertificate(id);
+  const project = getProject(certificate.projectId);
+  const talent = getTalent(project.talentId);
+  const claimedSourceUrl = Array.isArray(source) ? source[0] : source;
+  const sourceMatches = claimedSourceUrl ? isApprovedSourceUrl(certificate, claimedSourceUrl) : null;
+
+  return (
+    <main className="min-h-screen bg-[#111817] text-white">
+      <header className="border-b border-white/10"><div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-8"><Link href="/ko" className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">VA</span><span className="text-xs font-semibold uppercase tracking-[0.14em]">Verified AI Cast</span></Link><Link href="/ko/verify" className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">인증서 조회</Link></div></header>
+      <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-16"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/12 pb-5"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b477]">공개 출연 인증서</p><StatusPill status={certificate.status} /></div><h1 className="mt-8 max-w-4xl font-serif text-4xl leading-tight sm:text-6xl">{project.title} 공식 AI 출연 승인</h1><p className="mt-5 max-w-2xl text-base leading-7 text-white/60">이 공개 기록은 검수된 프로젝트, 대표 배우, 승인 상태, 결정이 적용되는 정확한 게시 URL을 식별합니다.</p><div className="mt-10 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4"><Fact label="인증서" value={certificate.id} /><Fact label="배우" value={talent.name} /><Fact label="소속사" value={talent.agency} /><Fact label="만료일" value={certificate.expiresAt} /></div><div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.74fr]"><section className="border border-white/12 bg-[#182321] p-5 sm:p-7"><p className="text-xs uppercase tracking-[0.16em] text-[#d4b477]">승인 범위</p><p className="mt-4 text-base leading-7 text-white/72">{certificate.licenseScope}</p><div className="mt-7 border-t border-white/10 pt-5"><p className="text-xs uppercase tracking-[0.14em] text-white/42">승인된 게시 URL</p><div className="mt-3 space-y-3">{certificate.approvedUrls.map((url) => <p key={url} className="break-all border border-white/10 bg-[#111817] p-3 font-mono text-sm text-[#c6dfd4]">{url}</p>)}</div></div></section><section className="border border-white/12 bg-[#182321] p-5 sm:p-7"><p className="text-xs uppercase tracking-[0.16em] text-[#d4b477]">출처 URL 검증</p><p className="mt-3 text-sm leading-6 text-white/58">이 인증서를 주장하는 페이지를 입력하세요. 링크 복사는 다른 URL의 승인을 의미하지 않습니다.</p><form className="mt-5 space-y-3"><input name="source" type="url" defaultValue={claimedSourceUrl} placeholder="https://example.com/published-work" className="w-full border border-white/18 bg-[#111817] px-3 py-3 text-sm text-white placeholder:text-white/28" /><button className="bg-[#d4b477] px-4 py-2.5 text-sm font-semibold text-[#111817] hover:bg-[#e3c98f]">출처 검증</button></form><VerificationResultKo claimedSourceUrl={claimedSourceUrl} sourceMatches={sourceMatches} status={certificate.status} /><div className="mt-6 border-t border-white/10 pt-5"><p className="text-xs uppercase tracking-[0.14em] text-white/42">검증 해시</p><p className="mt-2 break-all font-mono text-sm text-[#c6dfd4]">{certificate.verificationHash}</p></div></section></div></div>
+    </main>
+  );
+}
+
+function PolicyKo({ id }: { id: string }) {
+  const talent = getTalent(id);
+  const { policy } = talent;
+  return <AppShell locale="ko"><SectionHeader eyebrow="AI 출연 정책" title={`${talent.name} 승인 정책`} description="정책 설정은 제작자가 제출할 수 있는 범위, 에스컬레이션이 필요한 조건, 승인 결과물에 필요한 공개 고지를 정의합니다." /><div className="mb-6"><Notice tone="neutral">백엔드 출시 전 정책 변경은 버전 관리되어야 합니다. 기존 인증서는 승인 당시의 정책 snapshot을 유지해야 합니다.</Notice></div><div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Panel><PanelHeader eyebrow="정책 요약" title="상업적 가드레일" description="새 출연 검수 요청의 기본 기준을 설정합니다." /><div className="mt-4 space-y-4 text-sm"><label className="block"><span className="text-[#625d55]">검수 SLA</span><input defaultValue={policy.reviewSlaHours} className="mt-1 w-full rounded border border-[#cfc7ba] bg-white px-3 py-2" /></label><label className="block"><span className="text-[#625d55]">최소 라이선스 비용</span><input defaultValue={formatCurrency(policy.minimumLicenseFee)} className="mt-1 w-full rounded border border-[#cfc7ba] bg-white px-3 py-2" /></label><label className="block"><span className="text-[#625d55]">승인 지역</span><input defaultValue={talent.territory} className="mt-1 w-full rounded border border-[#cfc7ba] bg-white px-3 py-2" /></label></div><div className="mt-5 flex flex-wrap gap-3"><button className="bg-[#253b37] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#31504a]">정책 초안 저장</button><button className="border border-[#b9afa1] px-4 py-2.5 text-sm font-semibold text-[#31403d] hover:bg-[#e1dbd2]">인증서 조건 미리보기</button></div></Panel><div className="grid gap-5"><PolicyListKo title="허용 사용" items={policy.allowedUses} /><PolicyListKo title="제한 사용" items={policy.restrictedUses} /><PolicyListKo title="초상 경계" items={policy.likenessBoundaries} /><PolicyListKo title="필수 고지" items={policy.requiredDisclosures} /></div></div></AppShell>;
+}
+
+function DecisionCardKo({ title, copy }: { title: string; copy: string }) {
+  return <div className="rounded border border-[#e1d8ca] bg-white p-4"><p className="font-semibold">{title}</p><p className="mt-1 text-sm text-[#625d55]">{copy}</p></div>;
+}
+
+function Fact({ label, value }: { label: string; value: string }) {
+  return <div className="bg-[#182321] p-4"><p className="text-xs uppercase tracking-[0.14em] text-white/38">{label}</p><p className="mt-2 text-sm text-white/86">{value}</p></div>;
+}
+
+function VerificationResultKo({ claimedSourceUrl, sourceMatches, status }: { claimedSourceUrl?: string; sourceMatches: boolean | null; status: "active" | "revoked" | "expired" }) {
+  if (!claimedSourceUrl) return <p className="mt-4 border border-white/12 bg-white/5 p-3 text-sm text-white/55">출처 URL을 입력하면 게시 범위를 확인할 수 있습니다.</p>;
+  if (status !== "active") return <p className="mt-4 border border-[#a9615f] bg-[#4a2828] p-3 text-sm text-[#f2c2bd]">이 인증서는 {status} 상태입니다. 활성 승인처럼 표시하면 안 됩니다.</p>;
+  return sourceMatches ? <p className="mt-4 border border-[#6f927f] bg-[#243a34] p-3 text-sm text-[#b9d6c6]">검증 완료: 이 URL은 승인된 게시 범위에 포함되어 있습니다.</p> : <p className="mt-4 border border-[#a9615f] bg-[#4a2828] p-3 text-sm text-[#f2c2bd]">미승인: 이 URL은 승인된 게시 범위 밖입니다.</p>;
+}
+
+function PolicyListKo({ title, items }: { title: string; items: string[] }) {
+  return <Panel><PanelHeader title={title} /><div className="mt-3 grid gap-2 sm:grid-cols-2">{items.map((item) => <label key={item} className="flex items-start gap-3 rounded border border-[#e1d8ca] bg-white p-3 text-sm"><input type="checkbox" defaultChecked className="mt-1" /><span>{item}</span></label>)}</div></Panel>;
+}

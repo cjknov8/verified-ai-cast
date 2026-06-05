@@ -6,13 +6,13 @@ import { Notice, PrimaryButton, SecondaryButton, StatusPill } from "@/components
 type Action = "approved" | "changes_requested" | "rejected" | "revoked";
 type LocalEvent = { action: Action; note: string; createdAt: string };
 
-export function ReviewDecisionConsole({ projectId, initialStatus }: { projectId: string; initialStatus: string }) {
+export function ReviewDecisionConsole({ projectId, initialStatus, locale = "en" }: { projectId: string; initialStatus: string; locale?: "en" | "ko" }) {
   const [status, setStatus] = useState(initialStatus);
   const [note, setNote] = useState("");
   const [events, setEvents] = useState<LocalEvent[]>([]);
 
   function record(action: Action) {
-    const event = { action, note: note.trim() || defaultNote(action), createdAt: new Date().toISOString() };
+    const event = { action, note: note.trim() || defaultNote(action, locale), createdAt: new Date().toISOString() };
     const next = [event, ...events];
     setEvents(next);
     setStatus(action);
@@ -23,26 +23,42 @@ export function ReviewDecisionConsole({ projectId, initialStatus }: { projectId:
   return (
     <div className="mt-5 border-t border-[#ddd6cc] pt-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8b6234]">Record a demo decision</p><p className="mt-1 text-sm text-[#6c7773]">This browser-only event previews the Phase 2 audit log behavior.</p></div>
+        <div><p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#8b6234]">{locale === "ko" ? "데모 결정 기록" : "Record a demo decision"}</p><p className="mt-1 text-sm text-[#6c7773]">{locale === "ko" ? "이 브라우저 전용 이벤트는 Phase 2 audit log 동작을 미리 보여줍니다." : "This browser-only event previews the Phase 2 audit log behavior."}</p></div>
         <StatusPill status={status} />
       </div>
-      <textarea value={note} onChange={(event) => setNote(event.target.value)} className="field mt-4 min-h-20" placeholder="Decision note or reason" />
+      <textarea value={note} onChange={(event) => setNote(event.target.value)} className="field mt-4 min-h-20" placeholder={locale === "ko" ? "결정 메모 또는 사유" : "Decision note or reason"} />
       <div className="mt-3 flex flex-wrap gap-3">
-        <span onClick={() => record("approved")}><PrimaryButton>Approve</PrimaryButton></span>
-        <span onClick={() => record("changes_requested")}><SecondaryButton>Request changes</SecondaryButton></span>
-        <span onClick={() => record("rejected")}><SecondaryButton>Reject</SecondaryButton></span>
-        <span onClick={() => record("revoked")}><SecondaryButton>Revoke</SecondaryButton></span>
+        <span onClick={() => record("approved")}><PrimaryButton>{locale === "ko" ? "승인" : "Approve"}</PrimaryButton></span>
+        <span onClick={() => record("changes_requested")}><SecondaryButton>{locale === "ko" ? "수정 요청" : "Request changes"}</SecondaryButton></span>
+        <span onClick={() => record("rejected")}><SecondaryButton>{locale === "ko" ? "반려" : "Reject"}</SecondaryButton></span>
+        <span onClick={() => record("revoked")}><SecondaryButton>{locale === "ko" ? "철회" : "Revoke"}</SecondaryButton></span>
       </div>
-      {events.length ? <div className="mt-4 space-y-2">{events.map((event) => <Notice key={`${event.action}-${event.createdAt}`} tone={event.action === "approved" ? "success" : "warning"}><span className="font-semibold capitalize">{event.action.replace("_", " ")}</span> / {event.note}<span className="mt-1 block font-mono text-xs opacity-70">{event.createdAt}</span></Notice>)}</div> : null}
+      {events.length ? <div className="mt-4 space-y-2">{events.map((event) => <Notice key={`${event.action}-${event.createdAt}`} tone={event.action === "approved" ? "success" : "warning"}><span className="font-semibold capitalize">{locale === "ko" ? translateAction(event.action) : event.action.replace("_", " ")}</span> / {event.note}<span className="mt-1 block font-mono text-xs opacity-70">{event.createdAt}</span></Notice>)}</div> : null}
     </div>
   );
 }
 
-function defaultNote(action: Action) {
-  return {
+function defaultNote(action: Action, locale: "en" | "ko") {
+  const en = {
     approved: "Approved in the local demo workspace.",
     changes_requested: "Revision requested in the local demo workspace.",
     rejected: "Rejected in the local demo workspace.",
     revoked: "Certificate revoked in the local demo workspace.",
+  };
+  const ko = {
+    approved: "로컬 데모 워크스페이스에서 승인되었습니다.",
+    changes_requested: "로컬 데모 워크스페이스에서 수정 요청이 기록되었습니다.",
+    rejected: "로컬 데모 워크스페이스에서 반려되었습니다.",
+    revoked: "로컬 데모 워크스페이스에서 인증서가 철회되었습니다.",
+  };
+  return (locale === "ko" ? ko : en)[action];
+}
+
+function translateAction(action: Action) {
+  return {
+    approved: "승인",
+    changes_requested: "수정 요청",
+    rejected: "반려",
+    revoked: "철회",
   }[action];
 }
