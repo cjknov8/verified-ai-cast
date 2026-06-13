@@ -562,14 +562,25 @@ export function getTalent(id: string) {
   return talents.find((talent) => talent.id === id) ?? talents[0];
 }
 
+export function findTalent(id: string) {
+  return talents.find((talent) => talent.id === id);
+}
+
 export function getProject(id: string) {
   return projects.find((project) => project.id === id) ?? projects[0];
+}
+
+export function findProject(id: string) {
+  return projects.find((project) => project.id === id);
 }
 
 export function getCertificate(id: string) {
   return certificates.find((certificate) => certificate.id === id) ?? certificates[0];
 }
 
+export function findCertificate(id: string) {
+  return certificates.find((certificate) => certificate.id === id);
+}
 export function getAuditLogsForProject(projectId: string) {
   return auditLogs.filter((entry) => entry.projectId === projectId);
 }

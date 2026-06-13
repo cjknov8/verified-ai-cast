@@ -1,10 +1,12 @@
 import { AppShell } from "@/components/app-shell";
+import { notFound } from "next/navigation";
 import { Notice, Panel, PanelHeader, PrimaryButton, SectionHeader, SecondaryButton } from "@/components/ui";
-import { formatCurrency, getTalent } from "@/lib/mock-data";
+import { findTalent, formatCurrency } from "@/lib/mock-data";
 
 export default async function PolicyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const talent = getTalent(id);
+  const talent = findTalent(id);
+  if (!talent) notFound();
   const { policy } = talent;
 
   return (

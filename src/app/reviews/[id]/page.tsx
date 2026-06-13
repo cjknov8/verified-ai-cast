@@ -1,22 +1,25 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { ReviewDecisionConsole } from "@/components/review-decision-console";
 import { MetaRow, Notice, Panel, PanelHeader, SectionHeader, StatusPill } from "@/components/ui";
 import {
   formatCurrency,
   getAuditLogsForProject,
-  getCertificate,
-  getProject,
-  getTalent,
+  findCertificate,
+  findProject,
+  findTalent,
 } from "@/lib/mock-data";
 
 export default async function ReviewPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const project = getProject(id);
-  const talent = getTalent(project.talentId);
+  const project = findProject(id);
+  if (!project) notFound();
+  const talent = findTalent(project.talentId);
+  if (!talent) notFound();
   const auditLogs = getAuditLogsForProject(project.id);
   const certificate = project.certificateId
-    ? getCertificate(project.certificateId)
+    ? findCertificate(project.certificateId)
     : null;
 
   return (

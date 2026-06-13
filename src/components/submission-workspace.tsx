@@ -44,6 +44,7 @@ export function SubmissionWorkspace({ locale = "en" }: { locale?: "en" | "ko" })
   const [savedAt, setSavedAt] = useState<string>();
   const [submitted, setSubmitted] = useState(false);
   const [reserved, setReserved] = useState(false);
+  const [error, setError] = useState<string>();
   const steps = stepLabels[locale];
   const prefix = locale === "ko" ? "/ko" : "";
 
@@ -67,6 +68,12 @@ export function SubmissionWorkspace({ locale = "en" }: { locale?: "en" | "ko" })
   }
 
   function continueFlow() {
+    setError(undefined);
+    const validationError = validateStep(step, draft, reserved, locale);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     saveDraft();
     if (step === steps.length - 1) {
       setSubmitted(true);
@@ -87,6 +94,7 @@ export function SubmissionWorkspace({ locale = "en" }: { locale?: "en" | "ko" })
           ))}
         </div>
         {submitted ? <div className="mb-4"><Notice tone="success">{locale === "ko" ? "데모 제출이 이 브라우저에 기록되었습니다. Supabase를 연결하면 영구 프로젝트와 audit event가 생성됩니다." : "Demo submission recorded in this browser. Connect Supabase to create a persistent project and audit event."}</Notice></div> : null}
+        {error ? <div className="mb-4"><Notice tone="warning">{error}</Notice></div> : null}
         <Panel>
           {step === 0 ? <ProjectStep draft={draft} update={update} locale={locale} /> : null}
           {step === 1 ? <FilesStep draft={draft} update={update} locale={locale} /> : null}
@@ -117,6 +125,27 @@ export function SubmissionWorkspace({ locale = "en" }: { locale?: "en" | "ko" })
       </aside>
     </div>
   );
+}
+
+function validateStep(step: number, draft: Draft, reserved: boolean, locale: "en" | "ko") {
+  const messages = locale === "ko"
+    ? [
+        "프로젝트 제목, 배우 정책, 제작사, 사용 목적을 모두 입력해 주세요.",
+        "검수할 파일을 하나 이상 선택해 주세요.",
+        "지역, 공개 기간, 게시 채널, 수익 모델, 게시 URL을 모두 입력해 주세요.",
+        "제출 전 데모 검수 예약을 기록하고 필수 항목을 모두 완료해 주세요.",
+      ]
+    : [
+        "Complete the project title, talent policy, producer, and intended use.",
+        "Select at least one file for review.",
+        "Complete territory, release window, channels, revenue model, and publishing URLs.",
+        "Record the demo review reservation and complete every required item before submitting.",
+      ];
+
+  if (step === 0 && !(draft.title && draft.talentId && draft.producer && draft.intendedUse)) return messages[0];
+  if (step === 1 && Object.keys(draft.files).length === 0) return messages[1];
+  if (step === 2 && !(draft.territory && draft.releaseWindow && draft.channels && draft.revenueModel && draft.publishingUrls)) return messages[2];
+  if (step === 3 && !(draft.title && draft.talentId && draft.producer && Object.keys(draft.files).length && draft.territory && draft.publishingUrls && reserved)) return messages[3];
 }
 
 function ProjectStep({ draft, update, locale }: StepProps) {

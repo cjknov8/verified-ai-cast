@@ -323,7 +323,12 @@ export function HomePage({ locale }: { locale: Locale }) {
       <footer className="border-t border-white/10 bg-[#0f1514] px-5 py-6 text-xs uppercase tracking-[0.12em] text-white/45 sm:px-8 lg:px-10">
         <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-4">
           <p>{t.footer}</p>
-          <Link href={href("/operations")} className="text-white/65 hover:text-white">{t.openConsole}</Link>
+          <div className="flex flex-wrap gap-4">
+            <Link href="/trust" className="text-white/65 hover:text-white">{locale === "ko" ? "신뢰와 검증" : "Trust"}</Link>
+            <Link href="/privacy" className="text-white/65 hover:text-white">{locale === "ko" ? "개인정보" : "Privacy"}</Link>
+            <Link href="/terms" className="text-white/65 hover:text-white">{locale === "ko" ? "이용 조건" : "Terms"}</Link>
+            <Link href={href("/operations")} className="text-white/65 hover:text-white">{t.openConsole}</Link>
+          </div>
         </div>
       </footer>
     </main>

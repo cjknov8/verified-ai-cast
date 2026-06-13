@@ -8,10 +8,12 @@ import { SubmissionWorkspace } from "@/components/submission-workspace";
 import { MetaRow, Notice, Panel, PanelHeader, SectionHeader, Stat, StatusPill } from "@/components/ui";
 import {
   certificates,
+  findCertificate,
+  findProject,
+  findTalent,
   formatCurrency,
   formatCurrencyKrw,
   getAuditLogsForProject,
-  getCertificate,
   getProject,
   getTalent,
   isApprovedSourceUrl,
@@ -235,10 +237,12 @@ function CheckoutKo() {
 }
 
 function ReviewKo({ id }: { id: string }) {
-  const project = getProject(id);
-  const talent = getTalent(project.talentId);
+  const project = findProject(id);
+  if (!project) notFound();
+  const talent = findTalent(project.talentId);
+  if (!talent) notFound();
   const auditLogs = getAuditLogsForProject(project.id);
-  const certificate = project.certificateId ? getCertificate(project.certificateId) : null;
+  const certificate = project.certificateId ? findCertificate(project.certificateId) : null;
 
   return (
     <AppShell locale="ko">
@@ -252,9 +256,12 @@ function ReviewKo({ id }: { id: string }) {
 }
 
 function CertificateKo({ id, source }: { id: string; source?: string | string[] }) {
-  const certificate = getCertificate(id);
-  const project = getProject(certificate.projectId);
-  const talent = getTalent(project.talentId);
+  const certificate = findCertificate(id);
+  if (!certificate) notFound();
+  const project = findProject(certificate.projectId);
+  if (!project) notFound();
+  const talent = findTalent(project.talentId);
+  if (!talent) notFound();
   const claimedSourceUrl = Array.isArray(source) ? source[0] : source;
   const sourceMatches = claimedSourceUrl ? isApprovedSourceUrl(certificate, claimedSourceUrl) : null;
 
@@ -267,7 +274,8 @@ function CertificateKo({ id, source }: { id: string; source?: string | string[] 
 }
 
 function PolicyKo({ id }: { id: string }) {
-  const talent = getTalent(id);
+  const talent = findTalent(id);
+  if (!talent) notFound();
   const { policy } = talent;
   return <AppShell locale="ko"><SectionHeader eyebrow="AI 출연 정책" title={`${talent.name} 승인 정책`} description="정책 설정은 제작자가 제출할 수 있는 범위, 에스컬레이션이 필요한 조건, 승인 결과물에 필요한 공개 고지를 정의합니다." /><div className="mb-6"><Notice tone="neutral">백엔드 출시 전 정책 변경은 버전 관리되어야 합니다. 기존 인증서는 승인 당시의 정책 snapshot을 유지해야 합니다.</Notice></div><div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]"><Panel><PanelHeader eyebrow="정책 요약" title="상업적 가드레일" description="새 출연 검수 요청의 기본 기준을 설정합니다." /><div className="mt-4 space-y-4 text-sm"><label className="block"><span className="text-[#625d55]">검수 SLA</span><input defaultValue={policy.reviewSlaHours} className="mt-1 w-full rounded border border-[#cfc7ba] bg-white px-3 py-2" /></label><label className="block"><span className="text-[#625d55]">최소 라이선스 비용</span><input defaultValue={formatCurrency(policy.minimumLicenseFee)} className="mt-1 w-full rounded border border-[#cfc7ba] bg-white px-3 py-2" /></label><label className="block"><span className="text-[#625d55]">승인 지역</span><input defaultValue={talent.territory} className="mt-1 w-full rounded border border-[#cfc7ba] bg-white px-3 py-2" /></label></div><div className="mt-5 flex flex-wrap gap-3"><button className="bg-[#253b37] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#31504a]">정책 초안 저장</button><button className="border border-[#b9afa1] px-4 py-2.5 text-sm font-semibold text-[#31403d] hover:bg-[#e1dbd2]">인증서 조건 미리보기</button></div></Panel><div className="grid gap-5"><PolicyListKo title="허용 사용" items={policy.allowedUses} /><PolicyListKo title="제한 사용" items={policy.restrictedUses} /><PolicyListKo title="초상 경계" items={policy.likenessBoundaries} /><PolicyListKo title="필수 고지" items={policy.requiredDisclosures} /></div></div></AppShell>;
 }

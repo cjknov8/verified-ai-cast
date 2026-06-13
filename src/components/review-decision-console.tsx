@@ -9,9 +9,25 @@ type LocalEvent = { action: Action; note: string; createdAt: string };
 export function ReviewDecisionConsole({ projectId, initialStatus, locale = "en" }: { projectId: string; initialStatus: string; locale?: "en" | "ko" }) {
   const [status, setStatus] = useState(initialStatus);
   const [note, setNote] = useState("");
-  const [events, setEvents] = useState<LocalEvent[]>([]);
+  const [events, setEvents] = useState<LocalEvent[]>(() => {
+    if (typeof window === "undefined") return [];
+    const stored = window.localStorage.getItem(`verified-ai-cast:review-events:${projectId}`);
+    if (!stored) return [];
+    try {
+      return JSON.parse(stored) as LocalEvent[];
+    } catch {
+      window.localStorage.removeItem(`verified-ai-cast:review-events:${projectId}`);
+      return [];
+    }
+  });
+  const [error, setError] = useState<string>();
 
   function record(action: Action) {
+    setError(undefined);
+    if (action !== "approved" && !note.trim()) {
+      setError(locale === "ko" ? "수정 요청, 반려, 철회에는 구체적인 사유가 필요합니다." : "A specific reason is required for changes, rejection, and revocation.");
+      return;
+    }
     const event = { action, note: note.trim() || defaultNote(action, locale), createdAt: new Date().toISOString() };
     const next = [event, ...events];
     setEvents(next);
@@ -27,6 +43,7 @@ export function ReviewDecisionConsole({ projectId, initialStatus, locale = "en" 
         <StatusPill status={status} />
       </div>
       <textarea value={note} onChange={(event) => setNote(event.target.value)} className="field mt-4 min-h-20" placeholder={locale === "ko" ? "결정 메모 또는 사유" : "Decision note or reason"} />
+      {error ? <div className="mt-3"><Notice tone="warning">{error}</Notice></div> : null}
       <div className="mt-3 flex flex-wrap gap-3">
         <span onClick={() => record("approved")}><PrimaryButton>{locale === "ko" ? "승인" : "Approve"}</PrimaryButton></span>
         <span onClick={() => record("changes_requested")}><SecondaryButton>{locale === "ko" ? "수정 요청" : "Request changes"}</SecondaryButton></span>

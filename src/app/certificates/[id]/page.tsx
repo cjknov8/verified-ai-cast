@@ -1,13 +1,17 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { StatusPill } from "@/components/ui";
-import { getCertificate, getProject, getTalent, isApprovedSourceUrl } from "@/lib/mock-data";
+import { findCertificate, findProject, findTalent, isApprovedSourceUrl } from "@/lib/mock-data";
 
 export default async function CertificatePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ source?: string | string[] }> }) {
   const { id } = await params;
   const { source } = await searchParams;
-  const certificate = getCertificate(id);
-  const project = getProject(certificate.projectId);
-  const talent = getTalent(project.talentId);
+  const certificate = findCertificate(id);
+  if (!certificate) notFound();
+  const project = findProject(certificate.projectId);
+  if (!project) notFound();
+  const talent = findTalent(project.talentId);
+  if (!talent) notFound();
   const claimedSourceUrl = Array.isArray(source) ? source[0] : source;
   const sourceMatches = claimedSourceUrl ? isApprovedSourceUrl(certificate, claimedSourceUrl) : null;
 
@@ -53,6 +57,10 @@ export default async function CertificatePage({ params, searchParams }: { params
             <VerificationResult claimedSourceUrl={claimedSourceUrl} sourceMatches={sourceMatches} status={certificate.status} />
             <div className="mt-6 border-t border-white/10 pt-5"><p className="text-xs uppercase tracking-[0.14em] text-white/42">Verification hash</p><p className="mt-2 break-all font-mono text-sm text-[#c6dfd4]">{certificate.verificationHash}</p></div>
           </section>
+        </div>
+        <div className="mt-8 flex flex-wrap gap-4 border-t border-white/10 pt-6 text-sm text-white/55">
+          <Link href="/trust" className="hover:text-white">What this record proves</Link>
+          <a href={`mailto:trust@verified-ai-cast.com?subject=Report%20${certificate.id}`} className="hover:text-white">Report misuse</a>
         </div>
       </div>
     </main>

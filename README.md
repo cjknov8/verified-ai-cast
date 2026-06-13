@@ -46,6 +46,12 @@ npm run build
 npm exec vercel -- --version
 ```
 
+## Collaboration
+
+GitHub `main` is the source of truth for Mac, Tailscale, and Codex Cloud work.
+See `docs/collaboration-and-release-workflow.md` for the required start, finish,
+CI, and deployment checks.
+
 ## Docs
 
 - `docs/product-spec.md`
