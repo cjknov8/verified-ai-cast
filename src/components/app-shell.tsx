@@ -31,6 +31,8 @@ const navGroups = [
     items: [
       { href: "/verify", label: "Certificate lookup", koLabel: "인증서 조회", marker: "08" },
       { href: "/certificates/cert-2026-0007", label: "Public certificate", koLabel: "공개 인증서", marker: "09" },
+      { href: "/authenticity", label: "Authenticity standard", koLabel: "정품 인증 기준", marker: "10" },
+      { href: "/scenarios", label: "Transaction UX lab", koLabel: "거래 UX 실험", marker: "11" },
     ],
   },
 ];
@@ -40,7 +42,7 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
   const prefix = locale === "ko" ? "/ko" : "";
 
   return (
-    <div className="min-h-screen bg-[#ebe6de] text-[#17211f]">
+    <div className="min-h-screen overflow-x-hidden bg-[#ebe6de] text-[#17211f]">
       <header className="border-b border-[#2d3d39] bg-[#17211f] text-white lg:hidden">
         <div className="flex items-center justify-between gap-4 px-4 py-4">
           <Brand locale={locale} />
@@ -48,7 +50,7 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
             {locale === "ko" ? "공개 사이트" : "Public site"}
           </Link>
         </div>
-        <nav className="flex gap-1 overflow-x-auto border-t border-white/10 px-3 py-2 text-sm">
+        <nav className="flex w-full max-w-full gap-1 overflow-x-auto border-t border-white/10 px-3 py-2 text-sm">
           {navGroups.flatMap((group) => group.items).map((item) => (
             <NavLink key={item.href} item={item} pathname={pathname} locale={locale} prefix={prefix} compact />
           ))}
@@ -85,7 +87,7 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
         </div>
       </aside>
 
-      <main className="min-h-screen lg:ml-64">
+      <main className="min-h-screen min-w-0 lg:ml-64">
         <div className="mx-auto max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">{children}</div>
       </main>
     </div>

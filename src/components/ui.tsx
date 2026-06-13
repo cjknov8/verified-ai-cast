@@ -22,7 +22,7 @@ export function SectionHeader({
 }
 
 export function Panel({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <section className={`border border-[#d2cbc1] bg-[#f8f5ef] p-5 shadow-sm ${className}`}>{children}</section>;
+  return <section className={`min-w-0 border border-[#d2cbc1] bg-[#f8f5ef] p-5 shadow-sm ${className}`}>{children}</section>;
 }
 
 export function PanelHeader({

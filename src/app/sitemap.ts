@@ -3,7 +3,7 @@ import { certificates } from "@/lib/mock-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://verified-ai-cast.vercel.app";
-  const publicRoutes = ["", "/ko", "/verify", "/trust", "/privacy", "/terms"];
+  const publicRoutes = ["", "/ko", "/verify", "/trust", "/authenticity", "/scenarios", "/privacy", "/terms"];
 
   return [
     ...publicRoutes.map((path) => ({

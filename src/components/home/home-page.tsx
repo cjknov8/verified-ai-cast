@@ -9,18 +9,18 @@ const copy = {
     nav: {
       framework: "Framework",
       certificate: "Certificate",
-      pricing: "Pricing",
+      pricing: "Authenticity",
       lookup: "Lookup",
       console: "Console",
     },
     cta: "Start approval",
-    heroEyebrow: "Official AI appearance infrastructure",
-    heroTitle: "Every likeness deserves a final cut.",
+    heroEyebrow: "The registry for authentic digital rights",
+    heroTitle: "Know the asset. Know the authority.",
     heroBody:
-      "Review AI performances with the people they represent. Issue public, revocable certificates for the exact projects and URLs that earned approval.",
-    submitProject: "Submit a project",
+      "Verify who is selling, what they are authorized to grant, which exact asset was approved, and where the buyer may use it.",
+    submitProject: "Explore transaction lab",
     viewCertificate: "View a certificate",
-    heroTags: ["Actor-first review", "URL-bound certificates", "Revocable approval"],
+    heroTags: ["Verified seller", "Authenticated asset", "Scoped transaction", "Live status"],
     premiseEyebrow: "The premise",
     premiseTitle: "Control the official claim, not the creative tool.",
     premiseBody: [
@@ -73,18 +73,18 @@ const copy = {
     nav: {
       framework: "이용 방식",
       certificate: "인증서",
-      pricing: "가격",
+      pricing: "정품 기준",
       lookup: "조회",
       console: "콘솔",
     },
     cta: "검수 시작",
-    heroEyebrow: "배우가 직접 승인하는 AI 출연",
-    heroTitle: "공식 승인된 AI 출연만 공개하세요.",
+    heroEyebrow: "정품 디지털 권리 에셋 레지스트리",
+    heroTitle: "에셋과 판매 권한을 함께 인증합니다.",
     heroBody:
-      "배우와 소속사가 AI 결과물을 확인합니다. 승인된 프로젝트와 URL에만 인증서를 발급합니다.",
-    submitProject: "검수 요청하기",
+      "누가 판매하는지, 어떤 권리를 줄 수 있는지, 정확히 어떤 에셋이 승인됐는지, 구매자가 어디에 사용할 수 있는지 확인합니다.",
+    submitProject: "거래 UX 체험",
     viewCertificate: "인증서 샘플 보기",
-    heroTags: ["배우 검수", "URL 인증", "철회 가능"],
+    heroTags: ["판매자 인증", "에셋 정품성", "거래 범위", "실시간 상태"],
     premiseEyebrow: "왜 필요한가",
     premiseTitle: "AI 영상은 많아져도, 공식 승인은 하나여야 합니다.",
     premiseBody: [
@@ -161,14 +161,14 @@ export function HomePage({ locale }: { locale: Locale }) {
           <nav className="hidden items-center gap-7 text-xs uppercase tracking-[0.14em] text-white/70 md:flex">
             <a href="#framework" className="hover:text-white">{t.nav.framework}</a>
             <a href="#certificate" className="hover:text-white">{t.nav.certificate}</a>
-            <a href="#pricing" className="hover:text-white">{t.nav.pricing}</a>
+            <Link href="/authenticity" className="hover:text-white">{t.nav.pricing}</Link>
             <Link href={href("/verify")} className="hover:text-white">{t.nav.lookup}</Link>
             <Link href={href("/operations")} className="hover:text-white">{t.nav.console}</Link>
           </nav>
           <div className="flex items-center gap-2">
             <LanguageSelector locale={locale} />
             <Link
-              href={href("/projects/new")}
+              href="/scenarios"
               className="hidden border border-[#d4b477]/70 bg-[#d4b477]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#f1d79f] hover:bg-[#d4b477]/20 sm:inline-flex"
             >
               {t.cta}
@@ -176,8 +176,8 @@ export function HomePage({ locale }: { locale: Locale }) {
           </div>
         </header>
 
-        <div className="relative z-10 mx-auto flex min-h-[calc(92svh-80px)] max-w-7xl items-end px-5 pb-12 sm:px-8 sm:pb-16 lg:px-10">
-          <div className="max-w-3xl">
+        <div className="relative z-10 mx-auto grid min-h-[calc(92svh-80px)] max-w-7xl items-end gap-10 px-5 pb-12 sm:px-8 sm:pb-16 lg:grid-cols-[1fr_0.58fr] lg:px-10">
+          <div className="max-w-4xl">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.24em] text-[#d4b477]">
               {t.heroEyebrow}
             </p>
@@ -188,7 +188,7 @@ export function HomePage({ locale }: { locale: Locale }) {
               {t.heroBody}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href={href("/projects/new")} className="bg-[#d4b477] px-5 py-3 text-sm font-semibold text-[#111817] hover:bg-[#e3c98f]">
+              <Link href="/scenarios" className="bg-[#d4b477] px-5 py-3 text-sm font-semibold text-[#111817] hover:bg-[#e3c98f]">
                 {t.submitProject}
               </Link>
               <Link href={href("/certificates/cert-2026-0007")} className="border border-white/30 px-5 py-3 text-sm font-semibold text-white hover:bg-white/10">
@@ -198,6 +198,23 @@ export function HomePage({ locale }: { locale: Locale }) {
             <div className="mt-12 flex flex-wrap gap-x-7 gap-y-3 border-t border-white/15 pt-5 text-xs uppercase tracking-[0.14em] text-white/55">
               {t.heroTags.map((tag) => <span key={tag}>{tag}</span>)}
             </div>
+          </div>
+          <div className="hidden border border-white/15 bg-[#101716]/90 p-5 backdrop-blur-sm lg:block">
+            <div className="flex items-center justify-between gap-4 border-b border-white/10 pb-4">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#d4b477]">{locale === "ko" ? "에셋 패스포트" : "Asset passport"}</p>
+              <span className="border border-[#769584] bg-[#243a34] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#c8ddcf]">{locale === "ko" ? "인증됨" : "Certified"}</span>
+            </div>
+            <p className="mt-8 font-serif text-3xl">{locale === "ko" ? "Nocturne Portrait 01" : "Nocturne Portrait 01"}</p>
+            <p className="mt-2 text-xs text-white/42">VAC / Signature digital appearance</p>
+            <dl className="mt-7 space-y-4 text-sm">
+              <HeroFact label={locale === "ko" ? "판매자" : "Seller"} value="Aster Rights Studio" />
+              <HeroFact label={locale === "ko" ? "권한" : "Authority"} value="A2 / scoped representation" />
+              <HeroFact label={locale === "ko" ? "에셋" : "Asset"} value="C2 / signed master v3" />
+              <HeroFact label={locale === "ko" ? "거래" : "Transaction"} value="T2 / executed and monitored" />
+            </dl>
+            <Link href="/authenticity" className="mt-7 inline-flex text-xs font-semibold uppercase tracking-[0.14em] text-[#d4b477] hover:text-white">
+              {locale === "ko" ? "인증 체계 보기 →" : "Inspect the standard →"}
+            </Link>
           </div>
         </div>
       </section>
@@ -327,12 +344,17 @@ export function HomePage({ locale }: { locale: Locale }) {
             <Link href="/trust" className="text-white/65 hover:text-white">{locale === "ko" ? "신뢰와 검증" : "Trust"}</Link>
             <Link href="/privacy" className="text-white/65 hover:text-white">{locale === "ko" ? "개인정보" : "Privacy"}</Link>
             <Link href="/terms" className="text-white/65 hover:text-white">{locale === "ko" ? "이용 조건" : "Terms"}</Link>
+            <Link href="/scenarios" className="text-white/65 hover:text-white">{locale === "ko" ? "거래 UX" : "UX Lab"}</Link>
             <Link href={href("/operations")} className="text-white/65 hover:text-white">{t.openConsole}</Link>
           </div>
         </div>
       </footer>
     </main>
   );
+}
+
+function HeroFact({ label, value }: { label: string; value: string }) {
+  return <div className="flex justify-between gap-4 border-b border-white/10 pb-3"><dt className="text-white/38">{label}</dt><dd className="text-right font-mono text-xs text-white/78">{value}</dd></div>;
 }
 
 function LanguageSelector({ locale }: { locale: Locale }) {
