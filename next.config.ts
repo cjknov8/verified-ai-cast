@@ -1,9 +1,16 @@
 import type { NextConfig } from "next";
+import { PHASE_DEVELOPMENT_SERVER } from "next/constants";
 
-const scriptPolicy =
-  process.env.NODE_ENV === "production"
-    ? "script-src 'self' 'unsafe-inline'"
-    : "script-src 'self' 'unsafe-inline' 'unsafe-eval'";
+const baseScriptPolicy = "script-src 'self' 'unsafe-inline'";
+const connectSources = [
+  "'self'",
+  process.env.NEXT_PUBLIC_SUPABASE_URL,
+  process.env.R2_ACCOUNT_ID
+    ? `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`
+    : undefined,
+]
+  .filter(Boolean)
+  .join(" ");
 
 const nextConfig: NextConfig = {
   async headers() {
@@ -19,12 +26,12 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              `default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; ${scriptPolicy}; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`,
+              `default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; ${baseScriptPolicy}; font-src 'self' data:; connect-src ${connectSources}; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`,
           },
         ],
       },
       {
-        source: "/(operations|agency|pricing-model|settlements|projects/:path*|reviews/:path*|talents/:path*)",
+        source: "/(operations|agency|pricing-model|settlements|infrastructure|login|projects/:path*|reviews/:path*|talents/:path*)",
         headers: [
           { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
         ],
@@ -33,4 +40,31 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default function config(phase: string): NextConfig {
+  const scriptPolicy =
+    phase === PHASE_DEVELOPMENT_SERVER
+      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+      : "script-src 'self' 'unsafe-inline'";
+
+  return {
+    ...nextConfig,
+    async headers() {
+      const configuredHeaders = await nextConfig.headers?.();
+
+      return (configuredHeaders ?? []).map((rule) => ({
+        ...rule,
+        headers: rule.headers.map((header) =>
+          header.key === "Content-Security-Policy"
+            ? {
+                ...header,
+                value: header.value.replace(
+                  /script-src 'self' 'unsafe-inline'(?: 'unsafe-eval')?/,
+                  scriptPolicy,
+                ),
+              }
+            : header,
+        ),
+      }));
+    },
+  };
+}

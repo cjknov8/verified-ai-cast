@@ -7,6 +7,24 @@ export type LaunchGate = {
 };
 
 export function getLaunchReadiness() {
+  const launchMarket = (process.env.LAUNCH_MARKET ?? "KR").toUpperCase();
+  const koreaPaymentsReady =
+    process.env.PAYMENTS_KR_ENABLED === "true" &&
+    Boolean(
+      process.env.NEXT_PUBLIC_PORTONE_STORE_ID &&
+        process.env.PORTONE_API_SECRET &&
+        process.env.PORTONE_TOSS_CHANNEL_KEY,
+    );
+  const globalPaymentsReady =
+    process.env.PAYMENTS_GLOBAL_ENABLED === "true" &&
+    Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET);
+  const paymentsReady =
+    launchMarket === "DUAL"
+      ? koreaPaymentsReady && globalPaymentsReady
+      : launchMarket === "GLOBAL"
+        ? globalPaymentsReady
+        : koreaPaymentsReady;
+
   const gates: LaunchGate[] = [
     {
       id: "database",
@@ -18,16 +36,25 @@ export function getLaunchReadiness() {
     {
       id: "auth",
       label: "Authentication and role enforcement",
-      ready: process.env.AUTH_ENFORCEMENT_ENABLED === "true",
+      ready:
+        process.env.AUTH_ENFORCEMENT_ENABLED === "true" &&
+        Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
       required: true,
-      detail: "Seller, buyer, reviewer, and operator access must be enforced server-side.",
+      detail: "Google OAuth sessions and seller, buyer, reviewer, and operator access must be enforced server-side.",
     },
     {
       id: "storage",
       label: "Private evidence storage",
-      ready: process.env.PRIVATE_STORAGE_ENABLED === "true",
+      ready:
+        process.env.PRIVATE_STORAGE_ENABLED === "true" &&
+        Boolean(
+          process.env.R2_ACCOUNT_ID &&
+            process.env.R2_ACCESS_KEY_ID &&
+            process.env.R2_SECRET_ACCESS_KEY &&
+            process.env.R2_BUCKET_NAME,
+        ),
       required: true,
-      detail: "Review media and authority evidence require private storage and signed access.",
+      detail: "Cloudflare R2 must remain private with short-lived signed upload access and ownership metadata.",
     },
     {
       id: "signing",
@@ -39,9 +66,9 @@ export function getLaunchReadiness() {
     {
       id: "payments",
       label: "Payment and payout controls",
-      ready: Boolean(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_WEBHOOK_SECRET),
+      ready: paymentsReady,
       required: true,
-      detail: "Payments, refunds, payout holds, and webhook reconciliation must be enabled.",
+      detail: `${launchMarket} launch requires configured checkout, refunds, payout holds, and webhook reconciliation.`,
     },
     {
       id: "legal",
