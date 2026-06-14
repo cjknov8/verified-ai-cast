@@ -345,6 +345,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <Link href="/privacy" className="text-white/65 hover:text-white">{locale === "ko" ? "개인정보" : "Privacy"}</Link>
             <Link href="/terms" className="text-white/65 hover:text-white">{locale === "ko" ? "이용 조건" : "Terms"}</Link>
             <Link href="/scenarios" className="text-white/65 hover:text-white">{locale === "ko" ? "거래 UX" : "UX Lab"}</Link>
+            <Link href="/launch-readiness" className="text-white/65 hover:text-white">{locale === "ko" ? "출시 준비도" : "Launch readiness"}</Link>
             <Link href={href("/operations")} className="text-white/65 hover:text-white">{t.openConsole}</Link>
           </div>
         </div>

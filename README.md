@@ -52,6 +52,11 @@ GitHub `main` is the source of truth for Mac, Tailscale, and Codex Cloud work.
 See `docs/collaboration-and-release-workflow.md` for the required start, finish,
 CI, and deployment checks.
 
+## Commercial Launch Control
+
+The public deployment remains a demonstration until every required gate reports
+ready at `/api/release-readiness`. See `docs/commercial-launch-gates.md`.
+
 ## Docs
 
 - `docs/product-spec.md`

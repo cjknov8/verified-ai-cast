@@ -82,3 +82,20 @@ STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_APP_URL=
 ```
+
+## Commercial Release Gate
+
+Before enabling real users or payments:
+
+```text
+https://YOUR_DOMAIN/api/release-readiness
+```
+
+must return HTTP `200` with:
+
+```json
+{ "launchReady": true }
+```
+
+HTTP `503` means the deployment must remain a demonstration. Do not override
+individual gates merely to change the status response.
