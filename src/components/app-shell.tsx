@@ -15,6 +15,7 @@ const navGroups = [
       { href: "/pricing-model", label: "Pricing model", koLabel: "가격 모델", marker: "03" },
       { href: "/settlements", label: "Settlement ledger", koLabel: "정산 장부", marker: "04" },
       { href: "/infrastructure", label: "Infrastructure", koLabel: "인프라 구성", marker: "04A" },
+      { href: "/business-plan", label: "Business plan", koLabel: "사업 실행계획", marker: "04B" },
     ],
   },
   {
