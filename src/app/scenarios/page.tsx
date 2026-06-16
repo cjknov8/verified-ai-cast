@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LanguageSwitch } from "@/components/language-switch";
 import { TransactionSimulator } from "@/components/transaction-simulator";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Transaction UX Lab",
@@ -12,8 +14,9 @@ export default function ScenariosPage() {
     <main className="min-h-screen bg-[#ebe6de] text-[#17211f]">
       <header className="border-b border-white/10 bg-[#111817] text-white">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
-          <Link href="/" className="text-xs font-semibold uppercase tracking-[0.16em]">Verified AI Cast</Link>
-          <div className="flex gap-4 text-xs uppercase tracking-[0.12em] text-white/60">
+          <Link href="/" className="text-xs font-semibold uppercase tracking-[0.16em]">{brand.name}</Link>
+          <div className="flex items-center gap-4 text-xs uppercase tracking-[0.12em] text-white/60">
+            <LanguageSwitch locale="en" />
             <Link href="/authenticity" className="hover:text-white">Authenticity standard</Link>
             <Link href="/verify" className="hover:text-white">Verify</Link>
           </div>

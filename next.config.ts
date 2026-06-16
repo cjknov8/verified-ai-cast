@@ -31,7 +31,7 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/(operations|agency|pricing-model|settlements|infrastructure|business-plan|login|projects/:path*|reviews/:path*|talents/:path*)",
+        source: "/(operations|agency|pricing-model|settlements|brand-assets|brand-assets/:path*|infrastructure|business-plan|login|projects/:path*|reviews/:path*|talents/:path*)",
         headers: [
           { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
         ],

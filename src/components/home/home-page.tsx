@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import { LanguageSwitch } from "@/components/language-switch";
+import { brand } from "@/lib/brand";
 
 type Locale = "en" | "ko";
 
@@ -11,7 +13,7 @@ const copy = {
       certificate: "Certificate",
       pricing: "Authenticity",
       lookup: "Lookup",
-      console: "Console",
+      console: "Workspace",
     },
     cta: "Start approval",
     heroEyebrow: "The registry for authentic digital rights",
@@ -25,14 +27,14 @@ const copy = {
     premiseTitle: "Control the official claim, not the creative tool.",
     premiseBody: [
       "AI media can be made anywhere. Official approval should remain scarce, inspectable, and commercially meaningful.",
-      "Verified AI Cast creates a rights-holder review layer between a finished performance and its public release. Creators gain legitimacy. Actors and agencies retain boundaries, visibility, and the ability to revoke.",
+      "Verified Presence creates a rights-holder review layer between a finished appearance or placement and its public release. Creators gain legitimacy. People, brands, and agencies retain boundaries, visibility, and the ability to revoke.",
     ],
     frameworkEyebrow: "Approval framework",
     frameworkTitle: "From finished frame to official release.",
     frameworkBody:
-      "A clear sequence for studios, talent teams, and viewers. Every transition is designed to become an immutable audit event in Phase 2.",
+      "A clear sequence for creators, rights holders, brands, and viewers. Every decision leaves a durable record for the next release step.",
     trustPoints: [
-      ["01", "Review the result", "Actors and agencies review the finished appearance, not an uncontrolled asset library."],
+      ["01", "Review the result", "Rights holders review the finished appearance or product placement, not an uncontrolled asset library."],
       ["02", "Approve the scope", "Each decision binds a project, release window, usage terms, and publishing URLs."],
       ["03", "Publish with proof", "An active public certificate lets viewers verify where official approval applies."],
     ],
@@ -40,7 +42,7 @@ const copy = {
     certificateTitle: "Trust that can be checked at the source.",
     certificateBody:
       "A certificate belongs to approved work and approved URLs. Copying a link to another page does not copy the approval.",
-    certificateRecord: "Verified AI Cast / Public record",
+    certificateRecord: "Verified Presence / Public record",
     active: "Active",
     certificateHeading: "Official AI appearance approval for Luma Seoul Season Teaser",
     certificateFacts: [
@@ -60,13 +62,13 @@ const copy = {
       "Covers policy review, result inspection, and a documented decision. License terms are issued separately when the appearance is approved.",
     included: [
       "Finished-result review",
-      "Talent policy comparison",
+      "Rights policy comparison",
       "Revision request support",
       "Public certificate on approval",
     ],
     reserveReview: "Reserve a review",
-    footer: "Verified AI Cast / Official AI appearance infrastructure",
-    openConsole: "Open operations console",
+    footer: "Verified Presence / Official asset appearance registry",
+    openConsole: "Open workspace",
   },
   ko: {
     langName: "한국어",
@@ -75,7 +77,7 @@ const copy = {
       certificate: "인증서",
       pricing: "정품 기준",
       lookup: "조회",
-      console: "콘솔",
+      console: "작업공간",
     },
     cta: "검수 시작",
     heroEyebrow: "정품 디지털 권리 에셋 레지스트리",
@@ -88,23 +90,23 @@ const copy = {
     premiseEyebrow: "왜 필요한가",
     premiseTitle: "AI 영상은 많아져도, 공식 승인은 하나여야 합니다.",
     premiseBody: [
-      "누구나 AI 영상을 만들 수 있습니다. 하지만 배우의 이름을 걸고 공개하려면 분명한 승인 기록이 필요합니다.",
-      "Verified AI Cast는 완성된 결과물을 배우 측이 검수하고, 승인된 URL에만 공개 인증서를 연결합니다.",
+      "누구나 AI 영상과 디지털 이미지를 만들 수 있습니다. 하지만 사람, 제품, 브랜드 이름을 걸고 공개하려면 분명한 승인 기록이 필요합니다.",
+      "Verified Presence는 완성된 결과물과 제품 배치를 권리자 측이 검수하고, 승인된 URL에만 공개 인증서를 연결합니다.",
     ],
     frameworkEyebrow: "작동 방식",
     frameworkTitle: "제출, 검수, 인증까지 한 흐름으로.",
     frameworkBody:
-      "제작자는 결과물을 제출하고, 배우 측은 사용 범위를 확인합니다. 승인된 결과물만 인증서와 함께 공개됩니다.",
+      "제작자는 결과물을 제출하고, 권리자 측은 사용 범위를 확인합니다. 승인된 결과물만 인증서와 함께 공개됩니다.",
     trustPoints: [
       ["01", "결과물 제출", "제작자가 완성된 AI 영상과 사용 목적, 게시 URL을 제출합니다."],
-      ["02", "배우 측 검수", "배우 또는 소속사가 초상, 음성, 문맥, 브랜드 리스크를 확인합니다."],
+      ["02", "권리자 검수", "배우, 소속사, 브랜드 담당자가 초상, 제품, 문맥, 브랜드 리스크를 확인합니다."],
       ["03", "인증서 공개", "승인된 URL에만 공식 인증서가 연결됩니다."],
     ],
     certificateEyebrow: "공개 인증서",
     certificateTitle: "승인 여부를 링크 하나로 확인합니다.",
     certificateBody:
       "인증서는 프로젝트와 URL에 묶입니다. 다른 페이지에서 같은 링크를 써도 승인 범위가 자동으로 옮겨가지 않습니다.",
-    certificateRecord: "Verified AI Cast / 공개 기록",
+    certificateRecord: "Verified Presence / 공개 기록",
     active: "활성",
     certificateHeading: "Luma Seoul Season Teaser 공식 AI 출연 승인",
     certificateFacts: [
@@ -124,8 +126,8 @@ const copy = {
       "먼저 사용 목적과 배우 등급을 확인합니다. 승인 가능성이 있는 건만 파일럿 견적으로 이동합니다.",
     included: ["무료 상담", "파일럿 견적", "조회수 기반 옵션", "승인 후 정식 계약"],
     reserveReview: "상담 요청하기",
-    footer: "Verified AI Cast / 공식 AI 출연 인증",
-    openConsole: "운영 콘솔 열기",
+    footer: "Verified Presence / 공식 에셋 등장 인증",
+    openConsole: "작업공간 열기",
   },
 } satisfies Record<Locale, Record<string, unknown>>;
 
@@ -154,9 +156,9 @@ export function HomePage({ locale }: { locale: Locale }) {
         <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
           <Link href={locale === "ko" ? "/ko" : "/"} className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">
-              VA
+              {brand.shortName}
             </span>
-            <span className="hidden text-sm font-semibold uppercase tracking-[0.16em] text-white sm:inline">Verified AI Cast</span>
+            <span className="hidden text-sm font-semibold uppercase tracking-[0.16em] text-white sm:inline">{brand.name}</span>
           </Link>
           <nav className="hidden items-center gap-7 text-xs uppercase tracking-[0.14em] text-white/70 md:flex">
             <a href="#framework" className="hover:text-white">{t.nav.framework}</a>
@@ -166,7 +168,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <Link href={href("/operations")} className="hover:text-white">{t.nav.console}</Link>
           </nav>
           <div className="flex items-center gap-2">
-            <LanguageSelector locale={locale} />
+            <LanguageSwitch locale={locale} />
             <Link
               href="/scenarios"
               className="hidden border border-[#d4b477]/70 bg-[#d4b477]/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.12em] text-[#f1d79f] hover:bg-[#d4b477]/20 sm:inline-flex"
@@ -205,7 +207,7 @@ export function HomePage({ locale }: { locale: Locale }) {
               <span className="border border-[#769584] bg-[#243a34] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#c8ddcf]">{locale === "ko" ? "인증됨" : "Certified"}</span>
             </div>
             <p className="mt-8 font-serif text-3xl">{locale === "ko" ? "Nocturne Portrait 01" : "Nocturne Portrait 01"}</p>
-            <p className="mt-2 text-xs text-white/42">VAC / Signature digital appearance</p>
+            <p className="mt-2 text-xs text-white/42">VP / Signature appearance asset</p>
             <dl className="mt-7 space-y-4 text-sm">
               <HeroFact label={locale === "ko" ? "판매자" : "Seller"} value="Aster Rights Studio" />
               <HeroFact label={locale === "ko" ? "권한" : "Authority"} value="A2 / scoped representation" />
@@ -356,39 +358,6 @@ export function HomePage({ locale }: { locale: Locale }) {
 
 function HeroFact({ label, value }: { label: string; value: string }) {
   return <div className="flex justify-between gap-4 border-b border-white/10 pb-3"><dt className="text-white/38">{label}</dt><dd className="text-right font-mono text-xs text-white/78">{value}</dd></div>;
-}
-
-function LanguageSelector({ locale }: { locale: Locale }) {
-  const options = [
-    { href: "/", label: "EN", locale: "en" },
-    { href: "/ko", label: "한국어", locale: "ko" },
-  ] as const;
-
-  return (
-    <div
-      className="flex border border-white/20 bg-black/15 p-0.5 text-xs font-semibold uppercase tracking-[0.1em]"
-      aria-label="Language selector"
-    >
-      {options.map((option) => {
-        const active = option.locale === locale;
-
-        return (
-          <Link
-            key={option.locale}
-            href={option.href}
-            className={`px-2.5 py-2 ${
-              active
-                ? "bg-[#d4b477] text-[#111817]"
-                : "text-white/65 hover:bg-white/10 hover:text-white"
-            }`}
-            aria-current={active ? "page" : undefined}
-          >
-            {option.label}
-          </Link>
-        );
-      })}
-    </div>
-  );
 }
 
 function KoreanStudioSection() {

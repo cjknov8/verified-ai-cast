@@ -6,7 +6,7 @@ import { transactionScenarios, type ScenarioRole } from "@/lib/transaction-scena
 const roles: Array<{ id: ScenarioRole; label: string }> = [
   { id: "buyer", label: "Buyer" },
   { id: "seller", label: "Seller" },
-  { id: "platform", label: "Registry" },
+  { id: "platform", label: "Verifier" },
 ];
 
 export function TransactionSimulator() {
@@ -72,7 +72,7 @@ export function TransactionSimulator() {
 
       <div className="grid gap-6 xl:grid-cols-[0.72fr_1.28fr]">
         <section className="border border-[#cfc6b9] bg-[#f8f5ef] p-5 sm:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8b6234]">Authentication matrix</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8b6234]">Verification checklist</p>
           <div className="mt-5 space-y-3">
             {scenario.checks.map((check) => (
               <div key={check.label} className="grid grid-cols-[auto_1fr] gap-3 border-b border-[#ddd5ca] pb-3">
@@ -111,7 +111,7 @@ export function TransactionSimulator() {
             <div className="mt-6 grid gap-4 sm:grid-cols-3">
               <Exchange label={current.actor === role ? "You provide" : `${current.actor} provides`} value={current.gives} />
               <Exchange label={current.actor === role ? "You receive" : "Counterparty receives"} value={current.receives} />
-              <Exchange label="Registry evidence" value={current.proof} />
+              <Exchange label="Certification evidence" value={current.proof} />
             </div>
             <div className="mt-7 flex justify-between gap-3">
               <button type="button" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))} className="border border-[#b9afa1] px-4 py-2.5 text-sm font-semibold disabled:opacity-35">Previous</button>
@@ -123,7 +123,7 @@ export function TransactionSimulator() {
 
       <section className="grid gap-px border border-[#cfc6b9] bg-[#cfc6b9] lg:grid-cols-[1fr_0.62fr]">
         <div className="bg-[#f4efe7] p-5 sm:p-7">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8b6234]">UX findings</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8b6234]">Customer notes</p>
           <ul className="mt-5 space-y-3 text-sm leading-6 text-[#53605c]">
             {scenario.friction.map((item) => <li key={item} className="border-b border-[#d8d0c4] pb-3">{item}</li>)}
           </ul>

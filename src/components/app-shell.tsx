@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LanguageSwitch } from "@/components/language-switch";
+import { brand } from "@/lib/brand";
 
 type Locale = "en" | "ko";
 
@@ -11,11 +13,10 @@ const navGroups = [
     koLabel: "워크스페이스",
     items: [
       { href: "/operations", label: "Operations", koLabel: "운영 현황", marker: "01" },
-      { href: "/agency", label: "Talent roster", koLabel: "배우 명단", marker: "02" },
+      { href: "/agency", label: "Rights holders", koLabel: "권리자 관리", marker: "02" },
       { href: "/pricing-model", label: "Pricing model", koLabel: "가격 모델", marker: "03" },
       { href: "/settlements", label: "Settlement ledger", koLabel: "정산 장부", marker: "04" },
-      { href: "/infrastructure", label: "Infrastructure", koLabel: "인프라 구성", marker: "04A" },
-      { href: "/business-plan", label: "Business plan", koLabel: "사업 실행계획", marker: "04B" },
+      { href: "/brand-assets", label: "Brand assets", koLabel: "브랜드 에셋", marker: "04A" },
     ],
   },
   {
@@ -24,7 +25,7 @@ const navGroups = [
     items: [
       { href: "/projects/new", label: "Submit project", koLabel: "프로젝트 제출", marker: "05" },
       { href: "/reviews/project-01", label: "Review workspace", koLabel: "검수 워크스페이스", marker: "06" },
-      { href: "/talents/talent-01/policy", label: "Policy editor", koLabel: "정책 편집", marker: "07" },
+      { href: "/talents/talent-01/policy", label: "Usage rules", koLabel: "사용 규칙", marker: "07" },
     ],
   },
   {
@@ -39,6 +40,12 @@ const navGroups = [
   },
 ];
 
+const pitchLinks = [
+  { href: "/infrastructure", label: "Infrastructure", koLabel: "인프라 구성" },
+  { href: "/business-plan", label: "Business plan", koLabel: "사업 실행계획" },
+  { href: "/launch-readiness", label: "Launch readiness", koLabel: "출시 게이트" },
+];
+
 export function AppShell({ children, locale = "en" }: { children: React.ReactNode; locale?: Locale }) {
   const pathname = usePathname();
   const prefix = locale === "ko" ? "/ko" : "";
@@ -48,9 +55,12 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
       <header className="border-b border-[#2d3d39] bg-[#17211f] text-white lg:hidden">
         <div className="flex items-center justify-between gap-4 px-4 py-4">
           <Brand locale={locale} />
-          <Link href={locale === "ko" ? "/ko" : "/"} className="border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.12em] text-white/70 hover:bg-white/10 hover:text-white">
-            {locale === "ko" ? "공개 사이트" : "Public site"}
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageSwitch locale={locale} />
+            <Link href={locale === "ko" ? "/ko" : "/"} className="border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.12em] text-white/70 hover:bg-white/10 hover:text-white">
+              {locale === "ko" ? "공개 사이트" : "Public site"}
+            </Link>
+          </div>
         </div>
         <nav className="flex w-full max-w-full gap-1 overflow-x-auto border-t border-white/10 px-3 py-2 text-sm">
           {navGroups.flatMap((group) => group.items).map((item) => (
@@ -64,7 +74,7 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
           <Brand locale={locale} />
         </div>
         <div className="border-b border-white/10 px-5 py-4">
-          <p className="text-xs uppercase tracking-[0.14em] text-[#d4b477]">{locale === "ko" ? "소속사 콘솔" : "Agency console"}</p>
+          <p className="text-xs uppercase tracking-[0.14em] text-[#d4b477]">{locale === "ko" ? "권리자 워크스페이스" : "Rights holder workspace"}</p>
           <p className="mt-2 text-sm font-semibold">Aster Rights Studio</p>
           <p className="mt-1 text-xs text-white/45">Mock workspace / KR, JP, US</p>
         </div>
@@ -79,6 +89,16 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
           ))}
         </nav>
         <div className="border-t border-white/10 p-4">
+          <div className="mb-4 border border-[#d4b477]/25 bg-[#d4b477]/8 p-3">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#d4b477]">{locale === "ko" ? "피칭 / 내부 자료" : "Pitch / internal"}</p>
+            <div className="mt-2 space-y-1">
+              {pitchLinks.map((item) => (
+                <Link key={item.href} href={`${prefix}${item.href}`} className="block text-xs text-[#c4a66e] hover:text-white">
+                  {locale === "ko" ? item.koLabel : item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
           <div className="flex items-center justify-between gap-3 text-xs">
             <span className="text-white/45">{locale === "ko" ? "환경" : "Environment"}</span>
             <span className="border border-[#6f927f]/60 bg-[#243a34] px-2 py-1 font-semibold uppercase tracking-[0.1em] text-[#b9d6c6]">Demo</span>
@@ -99,10 +119,10 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
 function Brand({ locale }: { locale: Locale }) {
   return (
     <Link href={locale === "ko" ? "/ko" : "/"} className="flex items-center gap-3">
-      <span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">VA</span>
+      <span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">{brand.shortName}</span>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.14em]">Verified AI Cast</p>
-        <p className="mt-1 text-[11px] text-white/45">{locale === "ko" ? "공식 출연 승인" : "Official appearance approvals"}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em]">{brand.name}</p>
+        <p className="mt-1 text-[11px] text-white/45">{brand.tagline[locale]}</p>
       </div>
     </Link>
   );

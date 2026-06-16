@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { LanguageSwitch } from "@/components/language-switch";
 import { StatusPill } from "@/components/ui";
+import { brand } from "@/lib/brand";
 import { findCertificate, findProject, findTalent, isApprovedSourceUrl } from "@/lib/mock-data";
 
 export default async function CertificatePage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ source?: string | string[] }> }) {
@@ -19,22 +21,25 @@ export default async function CertificatePage({ params, searchParams }: { params
     <main className="min-h-screen bg-[#111817] text-white">
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
-          <Link href="/" className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">VA</span><span className="text-xs font-semibold uppercase tracking-[0.14em]">Verified AI Cast</span></Link>
-          <Link href="/verify" className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">Certificate lookup</Link>
+          <Link href="/" className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">{brand.shortName}</span><span className="text-xs font-semibold uppercase tracking-[0.14em]">{brand.name}</span></Link>
+          <div className="flex items-center gap-3">
+            <Link href="/verify" className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">Certificate lookup</Link>
+            <LanguageSwitch locale="en" />
+          </div>
         </div>
       </header>
       <div className="mx-auto max-w-6xl px-5 py-10 sm:px-8 sm:py-16">
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/12 pb-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b477]">Public appearance certificate</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b477]">Public asset certificate</p>
           <StatusPill status={certificate.status} />
         </div>
-        <h1 className="mt-8 max-w-4xl font-serif text-4xl leading-tight sm:text-6xl">Official AI appearance approval for {project.title}</h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-white/60">This public record identifies the reviewed project, represented talent, approval state, and exact publishing URLs covered by the decision.</p>
+        <h1 className="mt-8 max-w-4xl font-serif text-4xl leading-tight sm:text-6xl">Official asset approval for {project.title}</h1>
+        <p className="mt-5 max-w-2xl text-base leading-7 text-white/60">This public record identifies the reviewed project, represented rights holder, approval state, and exact publishing URLs covered by the decision.</p>
 
         <div className="mt-10 grid gap-px bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
           <Fact label="Certificate" value={certificate.id} />
-          <Fact label="Actor" value={talent.name} />
-          <Fact label="Agency" value={talent.agency} />
+          <Fact label="Rights asset" value={talent.name} />
+          <Fact label="Issuer" value={talent.agency} />
           <Fact label="Expires" value={certificate.expiresAt} />
         </div>
 

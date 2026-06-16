@@ -86,7 +86,7 @@ export default function BusinessPlanPage() {
             </div>
             <div>
               <h3 className="font-semibold text-[#31403d]">Initial transaction</h3>
-              <p>The rights holder invoices the license directly. Verified AI Cast separately invoices review, evidence, and certification services.</p>
+              <p>The rights holder invoices the license directly. Verified Presence separately invoices review, evidence, and certification services.</p>
             </div>
           </div>
         </Panel>

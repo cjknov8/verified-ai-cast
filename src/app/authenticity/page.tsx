@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { LanguageSwitch } from "@/components/language-switch";
+import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "Authenticity Standard",
@@ -21,8 +23,11 @@ export default function AuthenticityPage() {
     <main className="min-h-screen bg-[#111817] text-white">
       <header className="border-b border-white/10">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
-          <Link href="/" className="text-xs font-semibold uppercase tracking-[0.16em]">Verified AI Cast</Link>
-          <Link href="/scenarios" className="border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.12em] text-white/70">Open UX lab</Link>
+          <Link href="/" className="text-xs font-semibold uppercase tracking-[0.16em]">{brand.name}</Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitch locale="en" />
+            <Link href="/scenarios" className="border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.12em] text-white/70">Open UX lab</Link>
+          </div>
         </div>
       </header>
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20 lg:px-10">

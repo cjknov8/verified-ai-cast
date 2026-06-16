@@ -38,6 +38,26 @@ const emptyDraft: Draft = {
   files: {},
 };
 
+const options = {
+  intendedUse: {
+    en: ["Campaign film", "Product placement", "Social teaser", "Virtual host", "Internal pitch"],
+    ko: ["캠페인 필름", "제품 배치", "소셜 티저", "가상 호스트", "내부 피치"],
+  },
+  territory: ["KR", "JP", "US", "EU", "Global", "Global excluding CN"],
+  releaseWindow: {
+    en: ["Internal review only", "1 month", "3 months", "6 months", "12 months"],
+    ko: ["내부 검토 전용", "1개월", "3개월", "6개월", "12개월"],
+  },
+  channels: {
+    en: ["Owned social", "Paid digital ads", "Campaign microsite", "Streaming teaser", "OTT / broadcast", "OOH"],
+    ko: ["자사 소셜", "유료 디지털 광고", "캠페인 마이크로사이트", "스트리밍 티저", "OTT / 방송", "옥외 광고"],
+  },
+  revenueModel: {
+    en: ["Fixed license", "Review only", "Base fee + performance", "Revenue share", "Enterprise quote"],
+    ko: ["고정 라이선스", "검수 전용", "기본료 + 성과형", "수익 쉐어", "엔터프라이즈 견적"],
+  },
+};
+
 export function SubmissionWorkspace({ locale = "en" }: { locale?: "en" | "ko" }) {
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Draft>(emptyDraft);
@@ -130,13 +150,13 @@ export function SubmissionWorkspace({ locale = "en" }: { locale?: "en" | "ko" })
 function validateStep(step: number, draft: Draft, reserved: boolean, locale: "en" | "ko") {
   const messages = locale === "ko"
     ? [
-        "프로젝트 제목, 배우 정책, 제작사, 사용 목적을 모두 입력해 주세요.",
+        "프로젝트 제목, 권리 에셋, 제작사, 사용 목적을 모두 입력해 주세요.",
         "검수할 파일을 하나 이상 선택해 주세요.",
         "지역, 공개 기간, 게시 채널, 수익 모델, 게시 URL을 모두 입력해 주세요.",
         "제출 전 데모 검수 예약을 기록하고 필수 항목을 모두 완료해 주세요.",
       ]
     : [
-        "Complete the project title, talent policy, producer, and intended use.",
+        "Complete the project title, rights asset, producer, and intended use.",
         "Select at least one file for review.",
         "Complete territory, release window, channels, revenue model, and publishing URLs.",
         "Record the demo review reservation and complete every required item before submitting.",
@@ -153,9 +173,9 @@ function ProjectStep({ draft, update, locale }: StepProps) {
     <PanelHeader eyebrow={locale === "ko" ? "1단계" : "Step 01"} title={locale === "ko" ? "프로젝트 기본 정보" : "Project essentials"} description={locale === "ko" ? "검수 자료 업로드 전에 상업적 맥락을 먼저 정의합니다." : "Identify the commercial context before uploading review materials."} />
     <div className="mt-5 grid gap-4 sm:grid-cols-2">
       <Field label={locale === "ko" ? "프로젝트 제목" : "Project title"} value={draft.title} onChange={(value) => update("title", value)} placeholder={locale === "ko" ? "캠페인 또는 제작물 제목" : "Campaign or production title"} />
-      <label className="block"><Label>{locale === "ko" ? "배우 정책" : "Talent policy"}</Label><select className="field" value={draft.talentId} onChange={(event) => update("talentId", event.target.value)}><option value="">{locale === "ko" ? "소속 배우 선택" : "Select represented talent"}</option>{talents.map((talent) => <option key={talent.id} value={talent.id}>{talent.name} / {talent.agency}</option>)}</select></label>
+      <label className="block"><Label>{locale === "ko" ? "권리 에셋" : "Rights asset"}</Label><select className="field" value={draft.talentId} onChange={(event) => update("talentId", event.target.value)}><option value="">{locale === "ko" ? "검수할 에셋 선택" : "Select asset to review"}</option>{talents.map((talent) => <option key={talent.id} value={talent.id}>{talent.name} / {talent.agency}</option>)}</select></label>
       <Field label={locale === "ko" ? "제작사 또는 스튜디오" : "Producer or studio"} value={draft.producer} onChange={(value) => update("producer", value)} placeholder={locale === "ko" ? "회사명" : "Company name"} />
-      <Field label={locale === "ko" ? "사용 목적" : "Intended use"} value={draft.intendedUse} onChange={(value) => update("intendedUse", value)} placeholder={locale === "ko" ? "캠페인 필름, 티저, 가상 호스트..." : "Campaign film, teaser, virtual host..."} />
+      <SelectField label={locale === "ko" ? "사용 목적" : "Intended use"} value={draft.intendedUse} onChange={(value) => update("intendedUse", value)} placeholder={locale === "ko" ? "사용 목적 선택" : "Select intended use"} options={options.intendedUse[locale]} />
     </div>
   </>;
 }
@@ -182,10 +202,10 @@ function RightsStep({ draft, update, locale }: StepProps) {
   return <>
     <PanelHeader eyebrow={locale === "ko" ? "3단계" : "Step 03"} title={locale === "ko" ? "요청 권리와 URL" : "Requested rights and URLs"} description={locale === "ko" ? "최종 인증서는 검수된 범위와 승인된 게시 URL에만 유효합니다." : "The final certificate will be valid only for the reviewed scope and approved publishing URLs."} />
     <div className="mt-5 grid gap-4 sm:grid-cols-2">
-      <Field label={locale === "ko" ? "캠페인 지역" : "Campaign territory"} value={draft.territory} onChange={(value) => update("territory", value)} placeholder="KR, JP, US" />
-      <Field label={locale === "ko" ? "공개 기간" : "Release window"} value={draft.releaseWindow} onChange={(value) => update("releaseWindow", value)} placeholder={locale === "ko" ? "12개월" : "12 months"} />
-      <Field label={locale === "ko" ? "게시 채널" : "Publishing channels"} value={draft.channels} onChange={(value) => update("channels", value)} placeholder={locale === "ko" ? "마이크로사이트, owned social, 스트리밍 티저" : "Microsite, owned social, streaming teaser"} />
-      <Field label={locale === "ko" ? "수익 모델" : "Revenue model"} value={draft.revenueModel} onChange={(value) => update("revenueModel", value)} placeholder={locale === "ko" ? "브랜드 캠페인 / 고정 라이선스" : "Brand campaign / fixed license"} />
+      <SelectField label={locale === "ko" ? "캠페인 지역" : "Campaign territory"} value={draft.territory} onChange={(value) => update("territory", value)} placeholder={locale === "ko" ? "지역 선택" : "Select territory"} options={options.territory} />
+      <SelectField label={locale === "ko" ? "공개 기간" : "Release window"} value={draft.releaseWindow} onChange={(value) => update("releaseWindow", value)} placeholder={locale === "ko" ? "기간 선택" : "Select window"} options={options.releaseWindow[locale]} />
+      <SelectField label={locale === "ko" ? "게시 채널" : "Publishing channels"} value={draft.channels} onChange={(value) => update("channels", value)} placeholder={locale === "ko" ? "채널 선택" : "Select channel"} options={options.channels[locale]} />
+      <SelectField label={locale === "ko" ? "수익 모델" : "Revenue model"} value={draft.revenueModel} onChange={(value) => update("revenueModel", value)} placeholder={locale === "ko" ? "수익 모델 선택" : "Select revenue model"} options={options.revenueModel[locale]} />
       <label className="block sm:col-span-2"><Label>{locale === "ko" ? "제안 게시 URL" : "Proposed publishing URLs"}</Label><textarea className="field min-h-28" value={draft.publishingUrls} onChange={(event) => update("publishingUrls", event.target.value)} placeholder={"https://campaign.example.com/release\nhttps://video.example.com/watch/..."} /></label>
     </div>
   </>;
@@ -199,7 +219,7 @@ function ConfirmStep({ draft, reserved, locale }: { draft: Draft; reserved: bool
     [locale === "ko" ? "데모 검수 예약 기록" : "Demo review reservation recorded", reserved],
   ] as const;
   return <>
-    <PanelHeader eyebrow={locale === "ko" ? "4단계" : "Step 04"} title={locale === "ko" ? "제출 패키지 확인" : "Confirm submission package"} description={locale === "ko" ? "검수자는 완성 결과물, 요청 권리, 배우 정책을 비교합니다." : "Your reviewer will compare the finished output, requested rights, and talent policy."} />
+    <PanelHeader eyebrow={locale === "ko" ? "4단계" : "Step 04"} title={locale === "ko" ? "제출 패키지 확인" : "Confirm submission package"} description={locale === "ko" ? "검수자는 완성 결과물, 요청 권리, 에셋 사용 규칙을 비교합니다." : "Your reviewer will compare the finished output, requested rights, and asset usage rules."} />
     <div className="mt-5 space-y-3 text-sm text-[#5f6a67]">{checks.map(([item, complete]) => <div key={item} className="flex items-center gap-3 border border-[#ddd6cc] bg-white p-3"><span className={`flex h-5 w-5 items-center justify-center border text-xs ${complete ? "border-[#719279] bg-[#edf5ea] text-[#28522e]" : "border-[#c8bba9] text-[#9a8d7d]"}`}>{complete ? "✓" : "·"}</span><span>{item}</span></div>)}</div>
   </>;
 }
@@ -207,5 +227,16 @@ function ConfirmStep({ draft, reserved, locale }: { draft: Draft; reserved: bool
 type StepProps = { draft: Draft; locale: "en" | "ko"; update: <K extends keyof Draft>(key: K, value: Draft[K]) => void };
 function Field({ label, value, onChange, placeholder }: { label: string; value: string; onChange: (value: string) => void; placeholder: string }) {
   return <label className="block"><Label>{label}</Label><input className="field" value={value} onChange={(event) => onChange(event.target.value)} placeholder={placeholder} /></label>;
+}
+function SelectField({ label, value, onChange, placeholder, options: items }: { label: string; value: string; onChange: (value: string) => void; placeholder: string; options: string[] }) {
+  return (
+    <label className="block">
+      <Label>{label}</Label>
+      <select className="field" value={value} onChange={(event) => onChange(event.target.value)}>
+        <option value="">{placeholder}</option>
+        {items.map((item) => <option key={item} value={item}>{item}</option>)}
+      </select>
+    </label>
+  );
 }
 function Label({ children }: { children: React.ReactNode }) { return <span className="mb-1.5 block text-xs font-semibold uppercase tracking-[0.12em] text-[#756f67]">{children}</span>; }

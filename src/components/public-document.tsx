@@ -1,22 +1,29 @@
 import Link from "next/link";
+import { LanguageSwitch } from "@/components/language-switch";
+import { brand, type Locale } from "@/lib/brand";
 
 export function PublicDocument({
   eyebrow,
   title,
   updated,
   children,
+  locale = "en",
 }: {
   eyebrow: string;
   title: string;
   updated: string;
   children: React.ReactNode;
+  locale?: Locale;
 }) {
   return (
     <main className="min-h-screen bg-[#f4efe7] text-[#17211f]">
       <header className="border-b border-[#d8d0c4] bg-[#111817] text-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-5 sm:px-8">
-          <Link href="/" className="text-xs font-semibold uppercase tracking-[0.14em]">Verified AI Cast</Link>
-          <Link href="/verify" className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">Certificate lookup</Link>
+          <Link href={locale === "ko" ? "/ko" : "/"} className="text-xs font-semibold uppercase tracking-[0.14em]">{brand.name}</Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitch locale={locale} />
+            <Link href={locale === "ko" ? "/ko/verify" : "/verify"} className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">{locale === "ko" ? "인증서 조회" : "Certificate lookup"}</Link>
+          </div>
         </div>
       </header>
       <article className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
