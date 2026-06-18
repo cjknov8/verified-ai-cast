@@ -5,8 +5,8 @@ import { TransactionSimulator } from "@/components/transaction-simulator";
 import { brand } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Transaction UX Lab",
-  description: "Buyer, seller, asset, and registry simulations for verified premium digital rights transactions.",
+  title: "Sample Transactions",
+  description: "Buyer, seller, brand, and reviewer examples for verified premium digital rights transactions.",
 };
 
 export default function ScenariosPage() {
@@ -24,11 +24,11 @@ export default function ScenariosPage() {
       </header>
       <section className="border-b border-[#d2cbc1] bg-[#f4efe7]">
         <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8b6234]">Buyer and seller experience lab</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8b6234]">Sample transactions</p>
           <div className="mt-5 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
             <h1 className="font-serif text-5xl leading-tight sm:text-7xl">Trade permission, not ambiguity.</h1>
             <p className="max-w-2xl text-base leading-8 text-[#596561] lg:justify-self-end">
-              Three fictional transactions test how a premium rights asset moves from a verified seller to a verified buyer, what each party exchanges, when money moves, and when the registry must stop the deal.
+              Three fictional transactions show how a premium rights asset moves from a verified seller to a verified buyer, what each party exchanges, when money moves, and when verification must stop the deal.
             </p>
           </div>
         </div>

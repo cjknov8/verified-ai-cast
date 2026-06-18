@@ -3,13 +3,13 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { CertificateLookup } from "@/components/certificate-lookup";
 import { DemoReservation } from "@/components/demo-reservation";
+import { GuidedWorkspace } from "@/components/guided-workspace";
 import { LanguageSwitch } from "@/components/language-switch";
 import { ReviewDecisionConsole } from "@/components/review-decision-console";
 import { SubmissionWorkspace } from "@/components/submission-workspace";
 import { MetaRow, Notice, Panel, PanelHeader, SectionHeader, Stat, StatusPill } from "@/components/ui";
 import { brand } from "@/lib/brand";
 import {
-  certificates,
   findCertificate,
   findProject,
   findTalent,
@@ -26,14 +26,6 @@ import {
   talentCommercialTiers,
   talents,
 } from "@/lib/mock-data";
-
-const projectUseKo: Record<string, string> = {
-  "Premium campaign film and social cutdowns": "프리미엄 캠페인 필름 및 소셜 컷다운",
-  "Interactive dealership screen": "인터랙티브 매장 디스플레이",
-  "Streaming teaser and press microsite": "스트리밍 티저 및 프레스 마이크로사이트",
-  "Virtual event host pilot": "가상 이벤트 호스트 파일럿",
-  "Seasonal lookbook microsite": "시즌 룩북 마이크로사이트",
-};
 
 const categoryKo: Record<string, string> = {
   Actor: "배우",
@@ -57,10 +49,6 @@ const certificateStatusKo: Record<string, string> = {
   revoked: "철회",
   expired: "만료",
 };
-
-function koUse(value: string) {
-  return projectUseKo[value] ?? value;
-}
 
 function koCategory(value: string) {
   return categoryKo[value] ?? value;
@@ -89,7 +77,7 @@ export default async function KoreanRoute({
   if (first === "trust" && slug.length === 1) return <KoreanInfoPage eyebrow="신뢰와 검증" title="인증서가 증명하는 것과 증명하지 않는 것을 구분합니다." description="인증서는 승인된 프로젝트와 URL에만 유효하며, 모든 법적 권리를 보증하는 일반 의견서가 아닙니다." />;
   if (first === "privacy" && slug.length === 1) return <KoreanInfoPage eyebrow="개인정보" title="개인정보 처리방침 초안" description="운영 법인, 보관 기간, 처리위탁, 국외 이전, 정보주체 권리는 실제 출시 전 법률 검토 후 확정합니다." />;
   if (first === "terms" && slug.length === 1) return <KoreanInfoPage eyebrow="이용 조건" title="데모 이용 조건" description="현재 서비스는 제품 데모이며, 실제 라이선스·결제·상업 인증을 실행하지 않습니다." />;
-  if (first === "scenarios" && slug.length === 1) return <KoreanInfoPage eyebrow="거래 UX 실험" title="구매자, 판매자, 레지스트리가 주고받는 것을 검토합니다." description="정품 에셋 거래에서 각 당사자가 제공하는 정보, 받는 권리, 인증 증거, 중단 조건을 시뮬레이션합니다." />;
+  if (first === "scenarios" && slug.length === 1) return <KoreanInfoPage eyebrow="샘플 거래" title="판매자, 구매자, 브랜드, 검수자가 무엇을 해야 하는지 보여줍니다." description="정품 에셋 거래에서 각 당사자가 제공하는 정보, 받는 권리, 인증 증거, 중단 조건을 샘플로 확인합니다." />;
   if (first === "launch-readiness" && slug.length === 1) return <KoreanInfoPage eyebrow="피칭 / 내부 자료" title="상용 출시 게이트" description="실제 결제, 인증서 발급, 운영자 온보딩을 켜기 전 충족해야 할 조건을 점검하는 내부 화면입니다." />;
   if (first === "login" && slug.length === 1) return <KoreanInfoPage eyebrow="보안 워크스페이스" title="Google 계정으로 접속합니다." description="로그인은 계정 접근만 확인하며, 판매자·구매자·검수자 권한과 에셋 소유권은 별도 승인되어야 합니다." />;
   if (first === "verify" && slug.length === 1) return <VerifyKo />;
@@ -180,45 +168,9 @@ function Label({ children }: { children: React.ReactNode }) {
 }
 
 function OperationsKo() {
-  const pending = projects.filter((project) => !["approved", "revoked"].includes(project.status)).length;
-  const approved = certificates.filter((certificate) => certificate.status === "active").length;
-  const held = ledger.filter((entry) => entry.status === "held").reduce((sum, entry) => sum + entry.amount, 0);
-
   return (
     <AppShell locale="ko">
-      <SectionHeader eyebrow="운영 대시보드" title="사람과 브랜드 에셋의 공식 등장을 승인합니다." description="완성된 영상·제품 배치 결과물을 검수하고, 결정을 기록하며, 공개 인증서 페이지를 발행하는 권리자 중심 워크스페이스입니다." />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="대기 중인 검수" value={String(pending)} detail="권리자 큐 기준" />
-        <Stat label="활성 인증서" value={String(approved)} detail={`총 ${certificates.length}개 공개 기록`} />
-        <Stat label="관리 에셋" value={String(talents.length)} detail="정책 기반 프로필" />
-        <Stat label="보류 금액" value={formatCurrency(held)} detail="승인 후 릴리즈" />
-      </div>
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_0.65fr]">
-        <Panel>
-          <PanelHeader eyebrow="검수 큐" title="검수 커맨드 센터" description="위험도, 정책 적합성, 인증 준비 상태를 기준으로 제출물을 우선순위화합니다." action={<Link href="/ko/reviews/project-01" className="bg-[#c9a86c] px-4 py-2 text-sm font-semibold text-[#182321]">검수 열기</Link>} />
-          <div className="mt-5 overflow-x-auto">
-            <table className="w-full min-w-[720px] text-left text-sm">
-              <thead className="border-b border-[#d5cec5] text-xs uppercase tracking-[0.12em] text-[#7e7971]">
-                <tr><th className="py-3">프로젝트</th><th className="py-3">배우</th><th className="py-3">사용 목적</th><th className="py-3">상태</th><th className="py-3">예산</th></tr>
-              </thead>
-              <tbody className="divide-y divide-[#e1dbd2]">
-                {projects.map((project) => {
-                  const talent = talents.find((item) => item.id === project.talentId);
-                  return <tr key={project.id}><td className="py-4 font-medium">{project.title}</td><td className="py-4 text-[#67716e]">{talent?.name}</td><td className="py-4 text-[#67716e]">{koUse(project.intendedUse)}</td><td className="py-4"><StatusPill status={project.status} locale="ko" /></td><td className="py-4 text-[#67716e]">{formatCurrency(project.budget)}</td></tr>;
-                })}
-              </tbody>
-            </table>
-          </div>
-        </Panel>
-        <Panel>
-          <PanelHeader eyebrow="참조" title="승인 워크플로우" />
-          <div className="mt-4 space-y-4 text-sm">
-            {["완성 결과물 제출", "정책 및 리스크 검토", "배우 측 결정 기록", "인증서 발급", "사용 및 정산 추적"].map((item, index) => (
-              <div key={item} className="flex gap-3 border-b border-[#e1dbd2] pb-3"><span className="font-mono text-xs text-[#9b713d]">0{index + 1}</span><p className="text-[#56615e]">{item}</p></div>
-            ))}
-          </div>
-        </Panel>
-      </div>
+      <GuidedWorkspace locale="ko" />
     </AppShell>
   );
 }
@@ -307,11 +259,11 @@ function SettlementsKo() {
 }
 
 function VerifyKo() {
-  return <AppShell locale="ko"><SectionHeader eyebrow="공개 신뢰" title="출연 인증서를 조회합니다." description="공식 AI 출연 주장에 의존하기 전에 현재 인증서 상태를 확인하세요." /><div className="grid gap-6 lg:grid-cols-[1fr_0.7fr]"><Panel><PanelHeader eyebrow="인증서 조회" title="공개 인증서 ID 입력" description="활성 데모 기록: cert-2026-0007" /><CertificateLookup locale="ko" /></Panel><div className="space-y-4"><Notice tone="neutral">유효한 인증서도 승인된 게시 URL에만 적용됩니다. 인증서 페이지의 URL allowlist를 확인하세요.</Notice><Notice tone="warning">철회되거나 만료된 기록은 투명성을 위해 남지만 활성 승인처럼 표시하면 안 됩니다.</Notice></div></div></AppShell>;
+  return <AppShell locale="ko"><SectionHeader eyebrow="공개 신뢰" title="에셋 인증서를 확인합니다." description="공식 주장에 의존하기 전에 현재 인증서 상태, 승인 URL, 사용 범위를 확인하세요." /><div className="grid gap-6 lg:grid-cols-[1fr_0.7fr]"><Panel><PanelHeader eyebrow="인증서 조회" title="공개 인증서 ID 입력" description="활성 데모 기록: cert-2026-0007" /><CertificateLookup locale="ko" /></Panel><div className="space-y-4"><Notice tone="neutral">유효한 인증서도 승인된 게시 URL에만 적용됩니다. 인증서 페이지의 URL allowlist를 확인하세요.</Notice><Notice tone="warning">철회되거나 만료된 기록은 투명성을 위해 남지만 활성 승인처럼 표시하면 안 됩니다.</Notice></div></div></AppShell>;
 }
 
 function NewProjectKo() {
-  return <AppShell locale="ko"><SectionHeader eyebrow="제작자 제출" title="공식 출연 검수를 준비합니다." description="완성된 AI 결과물, 지원 기록, 배우 팀이 검토할 정확한 권리 범위를 제출합니다." /><SubmissionWorkspace locale="ko" /></AppShell>;
+  return <AppShell locale="ko"><SectionHeader eyebrow="검수 요청" title="공식 에셋 검수를 준비합니다." description="완성 결과물, 지원 기록, 권리자가 검토할 정확한 사용 범위를 제출합니다." /><SubmissionWorkspace locale="ko" /></AppShell>;
 }
 
 function CheckoutKo() {

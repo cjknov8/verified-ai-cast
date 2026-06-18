@@ -12,19 +12,19 @@ const navGroups = [
     label: "Workspace",
     koLabel: "워크스페이스",
     items: [
-      { href: "/operations", label: "Operations", koLabel: "운영 현황", marker: "01" },
+      { href: "/operations", label: "Guided workspace", koLabel: "따라하기 홈", marker: "01" },
       { href: "/agency", label: "Rights holders", koLabel: "권리자 관리", marker: "02" },
-      { href: "/pricing-model", label: "Pricing model", koLabel: "가격 모델", marker: "03" },
-      { href: "/settlements", label: "Settlement ledger", koLabel: "정산 장부", marker: "04" },
-      { href: "/brand-assets", label: "Brand assets", koLabel: "브랜드 에셋", marker: "04A" },
+      { href: "/pricing-model", label: "Pricing guide", koLabel: "가격 가이드", marker: "03" },
+      { href: "/settlements", label: "Payments & payouts", koLabel: "결제와 정산", marker: "04" },
+      { href: "/brand-assets", label: "Product placement assets", koLabel: "제품 배치 에셋", marker: "04A" },
     ],
   },
   {
     label: "Approval tools",
     koLabel: "승인 도구",
     items: [
-      { href: "/projects/new", label: "Submit project", koLabel: "프로젝트 제출", marker: "05" },
-      { href: "/reviews/project-01", label: "Review workspace", koLabel: "검수 워크스페이스", marker: "06" },
+      { href: "/projects/new", label: "Request verification", koLabel: "검수 요청", marker: "05" },
+      { href: "/reviews/project-01", label: "Review a request", koLabel: "요청 검수", marker: "06" },
       { href: "/talents/talent-01/policy", label: "Usage rules", koLabel: "사용 규칙", marker: "07" },
     ],
   },
@@ -32,10 +32,10 @@ const navGroups = [
     label: "Public trust",
     koLabel: "공개 신뢰",
     items: [
-      { href: "/verify", label: "Certificate lookup", koLabel: "인증서 조회", marker: "08" },
+      { href: "/verify", label: "Verify an asset", koLabel: "에셋 인증 확인", marker: "08" },
       { href: "/certificates/cert-2026-0007", label: "Public certificate", koLabel: "공개 인증서", marker: "09" },
       { href: "/authenticity", label: "Authenticity standard", koLabel: "정품 인증 기준", marker: "10" },
-      { href: "/scenarios", label: "Transaction UX lab", koLabel: "거래 UX 실험", marker: "11" },
+      { href: "/scenarios", label: "Sample transactions", koLabel: "샘플 거래", marker: "11" },
     ],
   },
 ];

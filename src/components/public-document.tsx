@@ -22,7 +22,7 @@ export function PublicDocument({
           <Link href={locale === "ko" ? "/ko" : "/"} className="text-xs font-semibold uppercase tracking-[0.14em]">{brand.name}</Link>
           <div className="flex items-center gap-3">
             <LanguageSwitch locale={locale} />
-            <Link href={locale === "ko" ? "/ko/verify" : "/verify"} className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">{locale === "ko" ? "인증서 조회" : "Certificate lookup"}</Link>
+            <Link href={locale === "ko" ? "/ko/verify" : "/verify"} className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">{locale === "ko" ? "에셋 인증 확인" : "Verify an asset"}</Link>
           </div>
         </div>
       </header>

@@ -23,7 +23,7 @@ export default async function CertificatePage({ params, searchParams }: { params
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-5 sm:px-8">
           <Link href="/" className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center border border-[#d4b477]/70 text-xs font-semibold text-[#e5cc98]">{brand.shortName}</span><span className="text-xs font-semibold uppercase tracking-[0.14em]">{brand.name}</span></Link>
           <div className="flex items-center gap-3">
-            <Link href="/verify" className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">Certificate lookup</Link>
+            <Link href="/verify" className="text-xs uppercase tracking-[0.14em] text-white/60 hover:text-white">Verify an asset</Link>
             <LanguageSwitch locale="en" />
           </div>
         </div>
