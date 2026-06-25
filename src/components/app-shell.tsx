@@ -103,6 +103,9 @@ export function AppShell({ children, locale = "en" }: { children: React.ReactNod
             <span className="text-white/45">{locale === "ko" ? "환경" : "Environment"}</span>
             <span className="border border-[#6f927f]/60 bg-[#243a34] px-2 py-1 font-semibold uppercase tracking-[0.1em] text-[#b9d6c6]">Demo</span>
           </div>
+          <div className="mt-4">
+            <LanguageSwitch locale={locale} />
+          </div>
           <Link href={locale === "ko" ? "/ko" : "/"} className="mt-4 block border border-white/16 px-3 py-2 text-center text-xs font-semibold uppercase tracking-[0.12em] text-white/65 hover:bg-white/10 hover:text-white">
             {locale === "ko" ? "공개 사이트 열기" : "Open public site"}
           </Link>

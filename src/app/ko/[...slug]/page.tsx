@@ -3,12 +3,16 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { CertificateLookup } from "@/components/certificate-lookup";
 import { DemoReservation } from "@/components/demo-reservation";
+import { GoogleLoginButton } from "@/components/google-login-button";
 import { GuidedWorkspace } from "@/components/guided-workspace";
 import { LanguageSwitch } from "@/components/language-switch";
+import { PublicDocument } from "@/components/public-document";
 import { ReviewDecisionConsole } from "@/components/review-decision-console";
 import { SubmissionWorkspace } from "@/components/submission-workspace";
+import { TransactionSimulator } from "@/components/transaction-simulator";
 import { MetaRow, Notice, Panel, PanelHeader, SectionHeader, Stat, StatusPill } from "@/components/ui";
 import { brand } from "@/lib/brand";
+import { getLaunchReadiness } from "@/lib/launch-readiness";
 import {
   findCertificate,
   findProject,
@@ -26,6 +30,7 @@ import {
   talentCommercialTiers,
   talents,
 } from "@/lib/mock-data";
+import { getPlatformProviders } from "@/lib/platform-providers";
 
 const categoryKo: Record<string, string> = {
   Actor: "배우",
@@ -71,15 +76,15 @@ export default async function KoreanRoute({
   if (first === "settlements" && slug.length === 1) return <SettlementsKo />;
   if (first === "brand-assets" && slug.length === 1) return <BrandAssetsKo />;
   if (first === "brand-assets" && second === "new" && slug.length === 2) return <NewBrandAssetKo />;
-  if (first === "business-plan" && slug.length === 1) return <KoreanInfoPage eyebrow="피칭 / 내부 자료" title="180일 사업 실행계획" description="사용자에게 공개되는 일반 메뉴가 아니라 투자자 데모와 창업자 운영 점검을 위한 내부 자료입니다." />;
-  if (first === "infrastructure" && slug.length === 1) return <KoreanInfoPage eyebrow="피칭 / 내부 자료" title="인프라 구성" description="Google 로그인, 비공개 저장소, 한국·글로벌 결제 제공자 구성을 설명하는 내부 검토 화면입니다." />;
-  if (first === "authenticity" && slug.length === 1) return <KoreanInfoPage eyebrow="정품 인증 기준" title="정품은 하나의 배지가 아니라 증거의 연결입니다." description="판매자 신원, 권한, 에셋 출처, 파일 무결성, 거래 범위, 승인 URL, 현재 상태를 분리해 확인합니다." />;
-  if (first === "trust" && slug.length === 1) return <KoreanInfoPage eyebrow="신뢰와 검증" title="인증서가 증명하는 것과 증명하지 않는 것을 구분합니다." description="인증서는 승인된 프로젝트와 URL에만 유효하며, 모든 법적 권리를 보증하는 일반 의견서가 아닙니다." />;
-  if (first === "privacy" && slug.length === 1) return <KoreanInfoPage eyebrow="개인정보" title="개인정보 처리방침 초안" description="운영 법인, 보관 기간, 처리위탁, 국외 이전, 정보주체 권리는 실제 출시 전 법률 검토 후 확정합니다." />;
-  if (first === "terms" && slug.length === 1) return <KoreanInfoPage eyebrow="이용 조건" title="데모 이용 조건" description="현재 서비스는 제품 데모이며, 실제 라이선스·결제·상업 인증을 실행하지 않습니다." />;
-  if (first === "scenarios" && slug.length === 1) return <KoreanInfoPage eyebrow="샘플 거래" title="판매자, 구매자, 브랜드, 검수자가 무엇을 해야 하는지 보여줍니다." description="정품 에셋 거래에서 각 당사자가 제공하는 정보, 받는 권리, 인증 증거, 중단 조건을 샘플로 확인합니다." />;
-  if (first === "launch-readiness" && slug.length === 1) return <KoreanInfoPage eyebrow="피칭 / 내부 자료" title="상용 출시 게이트" description="실제 결제, 인증서 발급, 운영자 온보딩을 켜기 전 충족해야 할 조건을 점검하는 내부 화면입니다." />;
-  if (first === "login" && slug.length === 1) return <KoreanInfoPage eyebrow="보안 워크스페이스" title="Google 계정으로 접속합니다." description="로그인은 계정 접근만 확인하며, 판매자·구매자·검수자 권한과 에셋 소유권은 별도 승인되어야 합니다." />;
+  if (first === "business-plan" && slug.length === 1) return <BusinessPlanKo />;
+  if (first === "infrastructure" && slug.length === 1) return <InfrastructureKo />;
+  if (first === "authenticity" && slug.length === 1) return <AuthenticityKo />;
+  if (first === "trust" && slug.length === 1) return <TrustKo />;
+  if (first === "privacy" && slug.length === 1) return <PrivacyKo />;
+  if (first === "terms" && slug.length === 1) return <TermsKo />;
+  if (first === "scenarios" && slug.length === 1) return <ScenariosKo />;
+  if (first === "launch-readiness" && slug.length === 1) return <LaunchReadinessKo />;
+  if (first === "login" && slug.length === 1) return <LoginKo nextPath="/ko/operations" />;
   if (first === "verify" && slug.length === 1) return <VerifyKo />;
   if (first === "checkout" && slug.length === 1) return <CheckoutKo />;
   if (first === "projects" && second === "new" && slug.length === 2) return <NewProjectKo />;
@@ -90,20 +95,277 @@ export default async function KoreanRoute({
   notFound();
 }
 
-function KoreanInfoPage({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
+function AuthenticityKo() {
+  const layers = [
+    ["01", "판매자 신원", "누가 이 에셋을 제공하나요?", "개인/사업자 신원, 공식 도메인, 제재·사기 위험 확인."],
+    ["02", "법적 권한", "이 판매자가 이 권리를 줄 수 있나요?", "대리권, 소유권, 위임 범위, 지역, 기간, 재라이선스 가능 여부."],
+    ["03", "에셋 출처", "정확히 이 에셋은 어디서 왔나요?", "제작자, 원본 파일, 발급 이력, 에디션, 모델·제작 기록."],
+    ["04", "콘텐츠 무결성", "검수된 버전과 같은 파일인가요?", "파일 해시, 서명된 manifest, fingerprint, 파생 관계, 보관 이력."],
+    ["05", "거래 무결성", "구매자와 판매자가 무엇에 합의했나요?", "고정 조건, 서명자 인증, 타임스탬프, 결제 상태, 변경·취소 이력."],
+    ["06", "배포 위치 연결", "어디에서 사용할 수 있나요?", "도메인, 계정, 플랫폼 ID, URL, 지역, 기간, 고지 문구, 모니터링."],
+    ["07", "현재 상태", "지금도 믿고 사용해도 되나요?", "활성, 중지, 철회, 만료, 분쟁, 대체 기록, 정정 이력."],
+  ];
+
+  return (
+    <main className="min-h-screen bg-[#111817] text-white">
+      <header className="border-b border-white/10">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
+          <Link href="/ko" className="text-xs font-semibold uppercase tracking-[0.16em]">{brand.name}</Link>
+          <div className="flex items-center gap-3">
+            <LanguageSwitch locale="ko" />
+            <Link href="/ko/scenarios" className="border border-white/20 px-3 py-2 text-xs uppercase tracking-[0.12em] text-white/70">샘플 거래</Link>
+          </div>
+        </div>
+      </header>
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20 lg:px-10">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#d4b477]">정품성 프로필 v0.1</p>
+        <h1 className="mt-5 max-w-5xl font-serif text-5xl leading-[1.05] sm:text-7xl">정품은 하나의 체크가 아니라 증거의 연결입니다.</h1>
+        <p className="mt-7 max-w-2xl text-base leading-8 text-white/62">
+          에셋은 진짜여도 판매자가 권한이 없을 수 있고, 라이선스는 맞아도 공개 파일이 바뀌었을 수 있습니다. 레지스트리는 각 주장을 분리해 보여줘야 합니다.
+        </p>
+      </section>
+      <section className="border-y border-white/10 bg-[#182321]">
+        <div className="mx-auto grid max-w-7xl lg:grid-cols-2">
+          {layers.map(([index, title, question, evidence]) => (
+            <article key={index} className="border-b border-white/10 p-5 sm:p-8 lg:border-r">
+              <div className="flex items-center justify-between gap-4">
+                <span className="font-mono text-xs text-[#d4b477]">{index}</span>
+                <span className="text-[10px] uppercase tracking-[0.16em] text-white/35">독립 검증 항목</span>
+              </div>
+              <h2 className="mt-9 font-serif text-3xl">{title}</h2>
+              <p className="mt-3 text-sm font-semibold text-[#c6dfd4]">{question}</p>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-white/52">{evidence}</p>
+            </article>
+          ))}
+          <article className="flex flex-col justify-between bg-[#d4b477] p-5 text-[#111817] sm:p-8">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em]">프리미엄 원칙</p>
+              <h2 className="mt-8 font-serif text-4xl">증거 체인이 없으면 배지를 팔지 않습니다.</h2>
+            </div>
+            <p className="mt-10 text-sm leading-6 opacity-70">고가 거래에는 이중 승인, 증거 보관, 구매자 구제책, 분쟁 경로가 필요합니다.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function TrustKo() {
+  return (
+    <PublicDocument locale="ko" eyebrow="신뢰 판단 가이드" title="신뢰와 검증" updated="2026년 6월 13일">
+      <DocSection title="공개 기록이 증명하는 것">활성 공개 기록은 이 플랫폼이 특정 프로젝트, 권리 에셋, 승인 범위, 기간, 게시 위치에 대한 승인을 기록했다는 사실을 보여줍니다. 승인은 만료되거나 철회될 수 있으므로 상태는 실시간으로 확인해야 합니다.</DocSection>
+      <DocSection title="증명하지 않는 것">인증서는 모든 기초 권리가 유효하다는 보편적 법률 의견서가 아니며, 미등록 페이지에 복사된 미디어가 승인됐다는 뜻도 아닙니다. 현재 데모의 URL 검사는 정규화된 URL 비교이며 도메인 소유권이나 미디어 fingerprint 검증은 아직 포함하지 않습니다.</DocSection>
+      <DocSection title="보증 라벨">신원, 대리 권한, 승인, 콘텐츠 일치, 배포 위치 일치는 서로 다른 주장입니다. 향후 기록은 하나의 체크마크로 합치지 않고 각 보증 수준을 독립적으로 보여줘야 합니다.</DocSection>
+      <DocSection title="오용 또는 불일치 신고">페이지 URL, 인증서 ID, 스크린샷, 발견 날짜를 보존하세요. 신고는 <a className="font-semibold text-[#31554f] underline" href="mailto:trust@verified-ai-cast.com?subject=Certificate%20misuse%20report">trust@verified-ai-cast.com</a>으로 보낼 수 있습니다. 프로덕션 신뢰 운영과 응답 SLA 전까지 신고는 제품 데모 기준으로 처리됩니다.</DocSection>
+    </PublicDocument>
+  );
+}
+
+function PrivacyKo() {
+  return (
+    <PublicDocument locale="ko" eyebrow="초안 고지" title="개인정보 처리방침" updated="2026년 6월 13일">
+      <DocSection title="현재 데모">현재 배포본은 프로덕션 계정을 제공하지 않습니다. 데모 초안과 검수 동작은 사용자의 브라우저에 저장됩니다. 현재 애플리케이션은 선택한 파일을 업로드하지 않습니다.</DocSection>
+      <DocSection title="기술 데이터">호스팅 및 인프라 제공자는 사이트 제공과 보호에 필요한 일반 요청 로그, IP 주소, 기기 정보, 보안 이벤트를 처리할 수 있습니다.</DocSection>
+      <DocSection title="프로덕션 출시 전">실제 온보딩 전에는 운영 법인, 처리 목적, 보관 기간, 처리위탁자, 국외 이전, 이용자 권리, 관할별 고지 사항을 명시해야 합니다.</DocSection>
+      <DocSection title="문의">개인정보 문의는 <a className="underline" href="mailto:privacy@verified-ai-cast.com">privacy@verified-ai-cast.com</a>으로 보낼 수 있습니다.</DocSection>
+    </PublicDocument>
+  );
+}
+
+function TermsKo() {
+  return (
+    <PublicDocument locale="ko" eyebrow="약관 초안" title="데모 이용 조건" updated="2026년 6월 13일">
+      <DocSection title="데모 전용">현재 서비스는 제품 데모입니다. 라이선스 체결, 결제 처리, 법적 구속력이 있는 승인, 프로덕션 인증기관 서비스를 실행하지 않습니다.</DocSection>
+      <DocSection title="데모 기록에 대한 의존 금지">명시적으로 달리 표시되지 않은 모든 인물, 조직, 프로젝트, 재무 항목, 해시, 인증서는 가상의 예시입니다. 상업 배포나 권리 클리어런스에 의존하면 안 됩니다.</DocSection>
+      <DocSection title="허용 사용">권리자를 사칭하거나, 불법 콘텐츠를 제출하거나, 데모 인증서를 프로덕션 승인처럼 표시하거나, 비공개 시스템을 탐색하거나, 서비스 가용성을 방해하면 안 됩니다.</DocSection>
+      <DocSection title="프로덕션 계약">권리자, 소속사, 제작자, 개인정보, 결제, 분쟁, 인증서 정책은 프로덕션 온보딩 전 법률 검토와 명시적 동의가 필요합니다.</DocSection>
+    </PublicDocument>
+  );
+}
+
+function BusinessPlanKo() {
+  const phases = [
+    ["0-30", "법인/문제 검증", "인터뷰 30건, 디자인 파트너 1곳, 법률·회계 상담"],
+    ["31-60", "디자인 파트너 운영", "소속사 2-3곳, 권리자 검수 3건, 검수 시간 측정"],
+    ["61-90", "유료 파일럿", "유료 파일럿 3건, 공개 인증 릴리즈 1건"],
+    ["91-180", "반복 가능성 및 프리시드", "인증서 10-20건, 반복 프로젝트, 법인 전환 및 투자자 미팅"],
+  ];
+  const channels = [
+    ["고객", "부티크 소속사", "60일 디자인 파트너", "즉시"],
+    ["고객", "AI 영상 스튜디오", "비공개 유료 파일럿", "즉시"],
+    ["지원", "K-Startup", "창업 지원 및 상담", "수시 공고"],
+    ["지원", "KOCCA", "콘텐츠 스타트업/산업 프로그램", "수시 공고"],
+    ["자본", "엔젤/액셀러레이터", "소개 및 오피스아워", "유료 파일럿 3건 이후"],
+    ["자본", "TIPS 운영사", "운영사 투자 및 추천", "법인/성과 확보 이후"],
+  ];
+
   return (
     <AppShell locale="ko">
-      <SectionHeader eyebrow={eyebrow} title={title} description={description} />
-      <Panel>
-        <PanelHeader title="한국어 버전 준비 상태" description="이 화면은 언어 전환 흐름이 끊기지 않도록 한국어 요약을 제공합니다. 상세 운영 문서는 저장소의 한국어 문서를 기준으로 관리합니다." />
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <Notice tone="neutral">일반 사용자에게 필요한 내용과 피칭/운영자 전용 내용을 분리해 표시합니다.</Notice>
-          <Notice tone="neutral">정품성 표현은 승인 범위와 URL에 묶어 사용합니다.</Notice>
-          <Notice tone="warning">법률 문서는 실제 출시 전 변호사 검토 후 교체해야 합니다.</Notice>
-        </div>
-      </Panel>
+      <SectionHeader eyebrow="사업 실행" title="프로토타입에서 신뢰 가능한 파일럿까지 180일 경로" description="당장의 목표는 넓은 셀프서비스 성장이 아니라, 권리자와 구매자가 통제된 검증 워크플로우를 반복해서 사용할지 증명하는 것입니다." aside={<span className="border border-[#b9afa1] bg-[#f8f5ef] px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em]">한국 · 창업자 주도</span>} />
+      <Notice tone="warning">개인사업자는 빠른 유료 검증에는 적합하지만 일반적인 지분투자를 받을 주식이 없습니다. 6개월 내 투자를 추진한다면 1인 주식회사 설립 또는 법인 전환 시점을 미리 정해야 합니다.</Notice>
+      <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {phases.map(([days, title, target]) => <article key={days} className="border border-[#d2cbc1] bg-[#f8f5ef] p-5"><p className="font-mono text-xs text-[#8b6234]">DAY {days}</p><h2 className="mt-3 text-lg font-semibold text-[#21312e]">{title}</h2><p className="mt-3 text-sm leading-6 text-[#64706d]">{target}</p></article>)}
+      </div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <Panel><PanelHeader eyebrow="초기 시장" title="누가 먼저 비용을 내는가" description="오픈 마켓플레이스가 아니라 서비스 보조형 거래로 시작합니다." /><div className="mt-5 space-y-5 text-sm leading-6 text-[#64706d]"><div><h3 className="font-semibold text-[#31403d]">공급</h3><p>배우, 모델, 성우, 크리에이터를 5-50명 관리하지만 디지털 권리 전담팀이 없는 부티크 소속사.</p></div><div><h3 className="font-semibold text-[#31403d]">수요</h3><p>최종 결과물이 승인됐음을 클라이언트에게 보여줘야 하는 AI 영상 스튜디오, 브랜디드 콘텐츠 제작사, 광고팀.</p></div><div><h3 className="font-semibold text-[#31403d]">초기 거래</h3><p>라이선스는 권리자가 직접 청구하고, Verified Presence는 검수·증거·인증 서비스 비용을 별도로 청구합니다.</p></div></div></Panel>
+        <Panel><PanelHeader eyebrow="창업자 영업" title="주간 운영 리듬" description="광고는 메시지와 고객 프로필이 검증될 때까지 기다립니다." /><dl className="mt-4"><Metric label="개별 아웃리치" value="주 20건" /><Metric label="고객 인터뷰" value="주 5건" /><Metric label="제품 데모" value="주 2건" /><Metric label="파일럿 제안" value="주 1건" /><Metric label="기존 계정 후속 연락" value="주 5건" /></dl></Panel>
+      </div>
+      <Panel className="mt-6"><PanelHeader eyebrow="접촉 지도" title="피치를 가져갈 곳" description="고객 증거가 먼저입니다. 지원사업과 투자자는 이미 작동하는 과정을 가속합니다." /><div className="mt-5 overflow-x-auto"><table className="w-full min-w-[720px] text-left text-sm"><thead className="border-b border-[#d2cbc1] text-xs uppercase tracking-[0.12em] text-[#827d75]"><tr><th className="px-3 py-3">유형</th><th className="px-3 py-3">채널</th><th className="px-3 py-3">요청</th><th className="px-3 py-3">시점</th></tr></thead><tbody>{channels.map(([type, channel, ask, timing]) => <tr key={channel} className="border-b border-[#e1dbd2]"><td className="px-3 py-4 font-semibold">{type}</td><td className="px-3 py-4 text-[#8b6234]">{channel}</td><td className="px-3 py-4 text-[#64706d]">{ask}</td><td className="px-3 py-4 text-[#64706d]">{timing}</td></tr>)}</tbody></table></div></Panel>
     </AppShell>
   );
+}
+
+function InfrastructureKo() {
+  const providers = getPlatformProviders();
+  const decisions = [
+    ["계정", "Supabase Auth + Google OAuth", "무료 티어 파일럿, 관리형 세션, Postgres RLS 연동, 단일 로그인 경로.", "유료 조직이 SSO나 복구 수단을 요구할 때."],
+    ["판매자 에셋 보관소", "Cloudflare R2 비공개 버킷", "S3 호환 서명 접근, 낮은 초기 운영 부담, 원본 파일 비공개.", "규제/엔터프라이즈 계약에서 AWS S3 + KMS + Object Lock 필요 시."],
+    ["한국 결제", "PortOne V2 + Toss Payments", "국내 카드, 국내 정산, PG 채널 교체 가능한 통합 레이어.", "승인율 또는 상업 데이터가 추가 PG를 정당화할 때."],
+    ["글로벌 결제", "Stripe Checkout 조건부", "관리형 체크아웃과 웹훅. 단, 지원되는 운영 법인이 있을 때만.", "Stripe 지원 법인이 없으면 파일럿 중 수동 인보이스 사용."],
+  ];
+
+  return (
+    <AppShell locale="ko">
+      <SectionHeader eyebrow="만들 것과 살 것" title="수익 없는 파일럿을 위한 관리형 인프라" description="플랫폼은 권한 규칙, 출처, 감사 기록을 소유합니다. 계정, 객체 저장소, 결제 같은 범용 기능은 관리형 제공자에게 위임합니다." aside={<span className="border border-[#b9afa1] bg-[#f8f5ef] px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em]">출시 시장: {providers.launchMarket}</span>} />
+      <Notice tone="warning">Google 로그인 완료는 판매 권한이나 에셋 소유권 인증이 아닙니다. 판매자 KYB/KYC, 권리 증빙, 검수자 승인 기록은 별도 절차로 유지해야 합니다.</Notice>
+      <div className="mt-6 grid gap-4 lg:grid-cols-3">
+        <ProviderCardKo title="계정" provider={providers.auth.provider} configured={providers.auth.configured} detail={providers.auth.mode} />
+        <ProviderCardKo title="비공개 저장소" provider={providers.storage.provider} configured={providers.storage.configured} detail={providers.storage.mode} />
+        <ProviderCardKo title="출시 결제" provider={providers.launchMarket === "GLOBAL" ? "Stripe Checkout" : "PortOne + Toss"} configured={providers.payments.configured} detail={`${providers.launchMarket} market gate`} />
+      </div>
+      <Panel className="mt-6"><PanelHeader eyebrow="현재 결정 기록" title="지금 살 것과 다시 검토할 조건" description="각 선택은 되돌리기 어려운 개발을 줄이면서 이전 경로를 남깁니다." /><div className="mt-5 overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="border-b border-[#d2cbc1] text-xs uppercase tracking-[0.12em] text-[#827d75]"><tr><th className="px-3 py-3">영역</th><th className="px-3 py-3">선택</th><th className="px-3 py-3">지금 이유</th><th className="px-3 py-3">재검토 조건</th></tr></thead><tbody>{decisions.map(([area, selected, reason, revisit]) => <tr key={area} className="border-b border-[#e1dbd2] align-top"><td className="px-3 py-4 font-semibold">{area}</td><td className="px-3 py-4 text-[#8b6234]">{selected}</td><td className="px-3 py-4 leading-6 text-[#64706d]">{reason}</td><td className="px-3 py-4 leading-6 text-[#64706d]">{revisit}</td></tr>)}</tbody></table></div></Panel>
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        <Panel><PanelHeader title="저장소 보안 경계" /><ol className="mt-4 space-y-3 text-sm leading-6 text-[#64706d]"><li><strong className="text-[#31403d]">01.</strong> 인증 사용자가 파일 메타데이터와 SHA-256을 제출합니다.</li><li><strong className="text-[#31403d]">02.</strong> 서버가 10분짜리 비공개 R2 업로드 URL을 발급합니다.</li><li><strong className="text-[#31403d]">03.</strong> 서버가 업로드 후 객체 메타데이터를 확인합니다.</li><li><strong className="text-[#31403d]">04.</strong> Supabase가 소유권과 변경 불가능한 객체 ID를 기록합니다.</li><li><strong className="text-[#31403d]">05.</strong> 프로젝트 권한이 연결되기 전 다운로드는 비활성화합니다.</li></ol></Panel>
+        <Panel><PanelHeader title="결제 출시 경계" /><ul className="mt-4 space-y-3 text-sm leading-6 text-[#64706d]"><li><strong className="text-[#31403d]">한국:</strong> PortOne V2가 계약된 Toss Payments 채널을 조율합니다.</li><li><strong className="text-[#31403d]">글로벌:</strong> Stripe는 지원 법인이 있을 때만 활성화합니다.</li><li><strong className="text-[#31403d]">승인 전:</strong> 테스트 모드 또는 수동 인보이스를 사용하고 실결제처럼 시뮬레이션하지 않습니다.</li><li><strong className="text-[#31403d]">판매자 정산:</strong> 단순 체크아웃 이체가 아니라 별도 장부와 법적 워크플로우로 유지합니다.</li></ul></Panel>
+      </div>
+    </AppShell>
+  );
+}
+
+function ScenariosKo() {
+  return (
+    <main className="min-h-screen bg-[#ebe6de] text-[#17211f]">
+      <header className="border-b border-white/10 bg-[#111817] text-white">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-5 sm:px-8 lg:px-10">
+          <Link href="/ko" className="text-xs font-semibold uppercase tracking-[0.16em]">{brand.name}</Link>
+          <div className="flex items-center gap-4 text-xs uppercase tracking-[0.12em] text-white/60">
+            <LanguageSwitch locale="ko" />
+            <Link href="/ko/authenticity" className="hover:text-white">정품 인증 기준</Link>
+            <Link href="/ko/verify" className="hover:text-white">인증 확인</Link>
+          </div>
+        </div>
+      </header>
+      <section className="border-b border-[#d2cbc1] bg-[#f4efe7]">
+        <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-10">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8b6234]">샘플 거래</p>
+          <div className="mt-5 grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+            <h1 className="font-serif text-5xl leading-tight sm:text-7xl">모호함이 아니라 권한을 거래합니다.</h1>
+            <p className="max-w-2xl text-base leading-8 text-[#596561] lg:justify-self-end">
+              세 가지 가상 거래를 통해 프리미엄 권리 에셋이 검증된 판매자에서 검증된 구매자로 이동하는 방식, 각 당사자가 주고받는 것, 결제 시점, 검증이 거래를 중단해야 하는 조건을 확인합니다.
+            </p>
+          </div>
+        </div>
+      </section>
+      <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14 lg:px-10">
+        <TransactionSimulator />
+      </div>
+    </main>
+  );
+}
+
+function LaunchReadinessKo() {
+  const readiness = getLaunchReadiness();
+  return (
+    <main className="min-h-screen bg-[#111817] text-white">
+      <header className="border-b border-white/10">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
+          <Link href="/ko" className="text-xs font-semibold uppercase tracking-[0.16em]">{brand.name}</Link>
+          <div className="flex items-center gap-3">
+            <span className={`border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${readiness.launchReady ? "border-[#769584] bg-[#243a34] text-[#c8ddcf]" : "border-[#b79a58] bg-[#423a22] text-[#f1d898]"}`}>
+              {readiness.launchReady ? "출시 가능" : "출시 차단"}
+            </span>
+            <LanguageSwitch locale="ko" />
+          </div>
+        </div>
+      </header>
+      <section className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b477]">릴리즈 통제</p>
+        <h1 className="mt-5 max-w-4xl font-serif text-5xl leading-tight sm:text-7xl">
+          상용 출시 게이트 {readiness.requiredCount}개 중 {readiness.readyCount}개가 준비됐습니다.
+        </h1>
+        <p className="mt-6 max-w-2xl text-base leading-7 text-white/60">
+          모든 필수 게이트가 충족될 때까지 실시간 인증서, 결제, 프로덕션 온보딩은 비활성 상태로 유지해야 합니다.
+        </p>
+        <div className="mt-10 grid gap-3 sm:grid-cols-2">
+          {readiness.gates.map((gate) => (
+            <article key={gate.id} className="border border-white/12 bg-[#182321] p-5">
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="font-semibold">{translateGate(gate.label)}</h2>
+                <span className={`border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] ${gate.ready ? "border-[#769584] text-[#c8ddcf]" : "border-[#a9615f] text-[#f2c2bd]"}`}>
+                  {gate.ready ? "준비" : "차단"}
+                </span>
+              </div>
+              <p className="mt-4 text-sm leading-6 text-white/50">{translateGate(gate.detail)}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function LoginKo({ nextPath }: { nextPath: string }) {
+  const enabled = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  return (
+    <main className="min-h-screen bg-[#111817] px-5 py-10 text-white sm:px-8">
+      <div className="mx-auto flex max-w-5xl items-center justify-between">
+        <Link href="/ko" className="text-xs font-semibold uppercase tracking-[0.16em]">{brand.name}</Link>
+        <div className="flex items-center gap-3">
+          <span className="hidden text-xs uppercase tracking-[0.14em] text-white/45 sm:block">보안 워크스페이스</span>
+          <LanguageSwitch locale="ko" />
+        </div>
+      </div>
+      <section className="mx-auto mt-20 max-w-md border border-white/14 bg-[#182321] p-6 sm:p-8">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#d4b477]">초대 기반 파일럿</p>
+        <h1 className="mt-4 font-serif text-4xl leading-tight">검증된 계정으로 접속합니다.</h1>
+        <p className="mt-4 text-sm leading-6 text-white/58">
+          파일럿 기간에는 Google 계정 로그인만 사용합니다. 로그인 후에도 판매자, 구매자, 검수자 권한은 별도 승인되어야 합니다.
+        </p>
+        <div className="mt-8"><GoogleLoginButton enabled={enabled} nextPath={nextPath} /></div>
+        <p className="mt-6 border-t border-white/10 pt-5 text-xs leading-5 text-white/40">
+          로그인은 계정 접근만 확인합니다. 사업자 권한이나 에셋 소유권을 자동으로 증명하지 않습니다.
+        </p>
+      </section>
+    </main>
+  );
+}
+
+function ProviderCardKo({ title, provider, configured, detail }: { title: string; provider: string; configured: boolean; detail: string }) {
+  return (
+    <article className="border border-[#d2cbc1] bg-[#f8f5ef] p-5">
+      <div className="flex items-start justify-between gap-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#827d75]">{title}</p>
+        <span className={`border px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] ${configured ? "border-[#9db59b] bg-[#edf5ea] text-[#28522e]" : "border-[#d7bd8d] bg-[#fbf4e5] text-[#72551d]"}`}>
+          {configured ? "설정됨" : "설정 필요"}
+        </span>
+      </div>
+      <h2 className="mt-4 text-lg font-semibold text-[#21312e]">{provider}</h2>
+      <p className="mt-2 text-sm leading-6 text-[#64706d]">{detail}</p>
+    </article>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4 border-b border-[#e1dbd2] py-3 text-sm">
+      <dt className="text-[#64706d]">{label}</dt>
+      <dd className="font-semibold text-[#31403d]">{value}</dd>
+    </div>
+  );
+}
+
+function DocSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return <section><h2 className="font-serif text-2xl text-[#17211f]">{title}</h2><p className="mt-3">{children}</p></section>;
 }
 
 function BrandAssetsKo() {
@@ -436,4 +698,27 @@ function translateScope(scope: string) {
     "Virtual event host pilot on the approved event page only.": "승인된 이벤트 페이지에 한정된 가상 이벤트 호스트 파일럿입니다.",
     "Seasonal lookbook microsite approval for the Spring 2025 campaign.": "2025 봄 캠페인 시즌 룩북 마이크로사이트 승인입니다.",
   }[scope] ?? scope;
+}
+
+function translateGate(value: string) {
+  return {
+    "Production database": "프로덕션 데이터베이스",
+    "Supabase URL and server credential must be configured.": "Supabase URL과 서버 권한 키가 설정되어야 합니다.",
+    "Authentication and role enforcement": "인증 및 역할 권한 적용",
+    "Google OAuth sessions and seller, buyer, reviewer, and operator access must be enforced server-side.": "Google OAuth 세션과 판매자, 구매자, 검수자, 운영자 접근 권한이 서버에서 강제되어야 합니다.",
+    "Private evidence storage": "비공개 증거 저장소",
+    "Cloudflare R2 must remain private with short-lived signed upload access and ownership metadata.": "Cloudflare R2는 비공개 상태를 유지하고 짧은 수명의 서명 업로드 접근과 소유권 메타데이터를 사용해야 합니다.",
+    "Certificate signing": "인증서 서명",
+    "Production certificates require an isolated signing key and named issuer.": "프로덕션 인증서는 격리된 서명 키와 명시된 발급자가 필요합니다.",
+    "Payment and payout controls": "결제 및 정산 통제",
+    "KR launch requires configured checkout, refunds, payout holds, and webhook reconciliation.": "KR 출시는 체크아웃, 환불, 정산 보류, 웹훅 대사가 설정되어야 합니다.",
+    "GLOBAL launch requires configured checkout, refunds, payout holds, and webhook reconciliation.": "GLOBAL 출시는 체크아웃, 환불, 정산 보류, 웹훅 대사가 설정되어야 합니다.",
+    "DUAL launch requires configured checkout, refunds, payout holds, and webhook reconciliation.": "DUAL 출시는 한국/글로벌 체크아웃, 환불, 정산 보류, 웹훅 대사가 설정되어야 합니다.",
+    "Counsel-approved launch documents": "변호사 승인 출시 문서",
+    "Terms, privacy, certificate policy, refund, dispute, and jurisdiction language need approval.": "이용약관, 개인정보, 인증서 정책, 환불, 분쟁, 관할 문구는 법률 승인이 필요합니다.",
+    "Trust and safety operations": "신뢰 및 안전 운영",
+    "Named owners and response procedures are required for fraud, revocation, and appeals.": "사기, 철회, 이의제기에 대한 담당자와 대응 절차가 필요합니다.",
+    "Monitoring and incident response": "모니터링 및 사고 대응",
+    "Errors, security events, availability, and certificate status need operational monitoring.": "오류, 보안 이벤트, 가용성, 인증서 상태는 운영 모니터링이 필요합니다.",
+  }[value] ?? value;
 }
